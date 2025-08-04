@@ -9,7 +9,6 @@ By the end of this tutorial, you'll have a working agent that can:
 - Make intelligent tool selections based on user intent
 - Handle errors gracefully
 - Maintain conversation history
-- Work with multi-language content (including Persian/Farsi)
 
 Let's start simple and gradually add complexity!
 
@@ -18,7 +17,7 @@ Let's start simple and gradually add complexity!
 Before we begin, make sure you have:
 - Python 3.8+
 - Basic understanding of Python classes and decorators
-- A Cohere API key (free tier available)
+- A Cohere API key (free from https://dashboard.cohere.com/)
 - The following packages installed:
 
 ```bash

@@ -57,7 +57,7 @@ When creating GAME.py, think of it as the engine of your agent. Just like buildi
 
 ### Goals: Defining What Your Agent Should Do
 
-```python
+```py
 # GAME.py
 import time
 import traceback

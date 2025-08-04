@@ -179,20 +179,18 @@ class Environment:
 
 Create tool_registry.py: This is where the magic happens for automatically registering your tools. When you write a Python function as a tool for your agent to use - for example, a function that lists CSV files or counts how many CSV files exist in a folder - you write the Python function, but for the agent to understand this is a tool that it can use to do these tasks, you need this tool registry.
 
-#### The Problem Without Tool Registry:
-
+### The Problem Without Tool Registry:
 Your agent is like a person in a workshop full of tools, but they're all unlabeled. The agent doesn't know what each tool does or how to use it.
-#### The Solution:
-
+### The Solution:
 This code is where Python functions get registered for your agent as tools - complete with descriptions, parameters, and everything the agent needs to understand and use them effectively.
 The Magic of Decorators:
 By using decorators, any time you create a tool, it automatically becomes available for the agent. You don't need to do anything manually to tell your agent "hey, this is a new tool you can use." Just add @tool above your function, and boom - your agent instantly knows about it.
 
-#### Think of it like this:
+### Think of it like this:
 
-#### Without tool registry: 
+### Without tool registry: 
 Write function → manually tell agent about it → manually describe what it does → manually list parameters
-#### With tool registry: 
+### With tool registry: 
 Write function → add @tool decorator → agent automatically discovers and understands it
 
 It's the difference between having to introduce every tool individually versus having a smart assistant that automatically catalogs everything for you.

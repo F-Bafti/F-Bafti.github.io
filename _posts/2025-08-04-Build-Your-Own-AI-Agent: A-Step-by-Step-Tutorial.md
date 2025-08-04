@@ -74,7 +74,7 @@ class Goal:
 **What this does**: Goals give your agent direction. The `frozen=True` makes them immutable - once you define a goal, it can't be accidentally changed.
 
 **Example usage**:
-```python
+```lang-python
 goal = Goal(
     priority=1,
     name="Explore Files", 

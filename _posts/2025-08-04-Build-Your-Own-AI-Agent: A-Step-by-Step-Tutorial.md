@@ -52,17 +52,21 @@ COHERE_API_KEY=your_cohere_api_key_here
 
 ## Step 3: Building the GAME Framework
 
-Let's start with the foundation: Create `GAME.py`.
-When creating GAME.py, think of it as the engine of your agent. Just like building a car engine once and using it in different cars, GAME.py gives you reusable building blocks. GAME stands for Goal, Action, Memory and Environment that are the building blocks of the AI agent's engine.
+Let's start with the foundation: Create GAME.py.
+When creating GAME.py, think of it as the engine of your agent. Just like building a car engine once and using it in different cars, GAME.py gives you reusable building blocks. GAME stands for Goal, Action, Memory and Environment that are the building blocks of the AI agent's engine. You can reuse this code whenever you are building a new agent.
+Now let's have a look at the following code:
 
-📁 **File:** `GAME.py`  
-🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/GAME.py)
+📁 File: GAME.py
+🔗 Source: [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/GAME.py)
 
-**What this does**: 
-- **Goals** give your agent direction. The `frozen=True` makes them immutable - once you define a goal, it can't be accidentally changed.
-- **Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
-- **Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
-- **Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
+This code has 4 classes for Goal, Action, Memory and Environment. Later on in your main.py, you will write down explicitly what is the goal, how to get the action and what is the memory for your agent, but the definition of the class and its attributes are set in this code.
+What this does:
+
+**Goals** give your agent direction. The frozen=True makes them immutable - once you define a goal, it can't be accidentally changed.
+**Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
+**Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
+**Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
+
 
 ## Step 4: Tool Registration System
 

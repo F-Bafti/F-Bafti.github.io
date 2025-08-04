@@ -52,7 +52,8 @@ COHERE_API_KEY=your_cohere_api_key_here
 
 ## Step 3: Building the GAME Framework
 
-Let's start with the foundation. Create `GAME.py`:
+Let's start with the foundation: Create `GAME.py`.
+When creating GAME.py, think of it as the engine of your agent. Just like building a car engine once and using it in different cars, GAME.py gives you reusable building blocks. GAME stands for Goal, Action, Memory and Environment that are the building blocks of the AI agent's engine.
 
 ### Goals: Defining What Your Agent Should Do
 
@@ -99,6 +100,7 @@ class Action:
         """Execute the action's function"""
         return self.function(**args)
 
+# Creates a container to store all available actions
 class ActionRegistry:
     def __init__(self):
         self.actions = {}
@@ -106,9 +108,11 @@ class ActionRegistry:
     def register(self, action: Action):
         self.actions[action.name] = action
 
+    # Looks up an action by its name
     def get_action(self, name: str) -> Action | None:
         return self.actions.get(name, None)
 
+    # Returns ALL actions as a list
     def get_actions(self) -> List[Action]:
         return list(self.actions.values())
 ```

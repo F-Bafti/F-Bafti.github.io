@@ -55,125 +55,14 @@ COHERE_API_KEY=your_cohere_api_key_here
 Let's start with the foundation: Create `GAME.py`.
 When creating GAME.py, think of it as the engine of your agent. Just like building a car engine once and using it in different cars, GAME.py gives you reusable building blocks. GAME stands for Goal, Action, Memory and Environment that are the building blocks of the AI agent's engine.
 
-### Goals: Defining What Your Agent Should Do
+📁 **File:** `GAME.py`  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/GAME.py)
 
-```py
-# GAME.py
-import time
-import traceback
-from dataclasses import dataclass
-from typing import List, Callable, Dict, Any
-
-@dataclass(frozen=True)
-class Goal:
-    priority: int
-    name: str
-    description: str
-```
-
-**What this does**: Goals give your agent direction. The `frozen=True` makes them immutable - once you define a goal, it can't be accidentally changed.
-
-**Example usage**:
-```python
-goal = Goal(
-    priority=1,
-    name="Explore Files", 
-    description="Navigate folders and list available CSV files."
-)
-```
-
-### Actions: Your Agent's Toolkit
-
-Add to `GAME.py`:
-
-```python
-class Action:
-    def __init__(self, name: str, function: Callable, description: str, 
-                 parameters: Dict, terminal: bool = False):
-        self.name = name
-        self.function = function
-        self.description = description
-        self.terminal = terminal
-        self.parameters = parameters
-
-    def execute(self, **args) -> Any:
-        """Execute the action's function"""
-        return self.function(**args)
-
-# Creates a container to store all available actions
-class ActionRegistry:
-    def __init__(self):
-        self.actions = {}
-
-    def register(self, action: Action):
-        self.actions[action.name] = action
-
-    # Looks up an action by its name
-    def get_action(self, name: str) -> Action | None:
-        return self.actions.get(name, None)
-
-    # Returns ALL actions as a list
-    def get_actions(self) -> List[Action]:
-        return list(self.actions.values())
-```
-
-**What this does**: Actions wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
-
-### Memory: Remembering Conversations
-
-Add to `GAME.py`:
-
-```python
-class Memory:
-    def __init__(self):
-        self.items = []
-
-    def add_memory(self, memory: dict):
-        """Add memory to working memory"""
-        self.items.append(memory)
-
-    def get_memories(self, limit: int = None) -> List[Dict]:
-        """Get conversation history"""
-        return self.items[:limit]
-
-    def copy_without_system_memories(self):
-        """Return a copy without system messages"""
-        filtered_items = [m for m in self.items if m["type"] != "system"]
-        memory = Memory()
-        memory.items = filtered_items
-        return memory
-```
-
-**What this does**: Memory stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
-
-### Environment: Safe Execution
-
-Complete `GAME.py`:
-
-```python
-class Environment:
-    def execute_action(self, action: Action, args: dict) -> dict:
-        """Execute an action and return the result safely."""
-        try:
-            result = action.execute(**args)
-            return self.format_result(result)
-        except Exception as e:
-            return {
-                "tool_executed": False,
-                "error": str(e),
-                "traceback": traceback.format_exc()
-            }
-
-    def format_result(self, result: Any) -> dict:
-        """Format the result with metadata."""
-        return {
-            "tool_executed": True,
-            "result": result,
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z")
-        }
-```
-
-**What this does**: The Environment safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
+**What this does**: 
+- **Goals** give your agent direction. The `frozen=True` makes them immutable - once you define a goal, it can't be accidentally changed.
+- **Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
+- **Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
+- **Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
 
 ## Step 4: Tool Registration System
 
@@ -187,7 +76,7 @@ This is where the magic happens for automatically registering your tools. When y
 
 **Think of it like this:**
 - **Without tool registry**: Write function → manually tell agent about it → manually describe what it does → manually list parameters
-- **With tool registry**: Write function → add `@tool` decorator → agent automatically discovers and understands it
+- **With tool registry**: Write function → add `@register_tool` decorator → agent automatically discovers and understands it
 
 It's the difference between having to introduce every tool individually versus having a smart assistant that automatically catalogs everything for you.
 Create tool_registry.py: This is where the magic happens for automatically registering your tools. When you write a Python function as a tool for your agent to use - for example, a function that lists CSV files or counts how many CSV files exist in a folder - you write the Python function, but for the agent to understand this is a tool that it can use to do these tasks, you need this tool registry.
@@ -234,119 +123,8 @@ Create `response_generator.py`: This is the bridge between your agent and the la
 
 Create `agent_language.py`. This is where we define how the agent communicates:
 
-```python
-# agent_language.py
-import json
-from typing import List, Any
-from response_generator import Prompt
-from tool_registry import tools
-from GAME import Goal, Action, ActionRegistry, Memory, Environment
-
-class AgentLanguage:
-    def __init__(self):
-        pass
-
-    def construct_prompt(self, actions: List[Action], environment: Environment, 
-                        goals: List[Goal], memory: Memory) -> Prompt:
-        raise NotImplementedError("Subclasses must implement this method")
-
-    def parse_response(self, response: str) -> dict:
-        raise NotImplementedError("Subclasses must implement this method")
-
-class AgentFunctionCallingActionLanguage(AgentLanguage):
-    def __init__(self):
-        super().__init__()
-
-    def format_goals(self, goals: List[Goal]) -> List:
-        """Convert goals into system messages."""
-        goal_text = "\n\n".join([
-            f"{goal.name}:\n{goal.description}" 
-            for goal in goals
-        ])
-        
-        return [{"role": "system", "content": goal_text}]
-
-    def format_memory(self, memory: Memory) -> List:
-        """Convert memory items to message format."""
-        items = memory.get_memories()
-        messages = []
-        
-        for item in items:
-            content = item.get("content", json.dumps(item, indent=4))
-            
-            if item["type"] == "assistant":
-                messages.append({"role": "assistant", "content": content})
-            elif item["type"] == "environment":
-                messages.append({"role": "user", "content": f"Tool result: {content}"})
-            else:
-                messages.append({"role": "user", "content": content})
-        
-        return messages
-
-    def format_actions(self, actions: List[Action]) -> List:
-        """Convert actions to tool format."""
-        tools = []
-        for action in actions:
-            tool_def = {
-                "type": "function",
-                "function": {
-                    "name": action.name,
-                    "description": action.description[:1024],
-                    "parameters": action.parameters,
-                }
-            }
-            tools.append(tool_def)
-        return tools
-
-    def construct_prompt(self, actions: List[Action], environment: Environment,
-                        goals: List[Goal], memory: Memory) -> Prompt:
-        """Build the complete prompt for the LLM."""
-        messages = []
-        messages += self.format_goals(goals)
-        messages += self.format_memory(memory)
-        
-        tools = self.format_actions(actions)
-        
-        return Prompt(messages=messages, tools=tools)
-
-    def parse_response(self, response: str) -> dict:
-        """Parse LLM response into tool call."""
-        try:
-            parsed = json.loads(response)
-            if "args" not in parsed or not isinstance(parsed["args"], dict):
-                parsed["args"] = {}
-            return parsed
-        except Exception:
-            # If parsing fails, default to terminate
-            return {
-                "tool": "terminate",
-                "args": {"message": response}
-            }
-
-class PythonActionRegistry(ActionRegistry):
-    """Registry that automatically loads tools from the tool_registry."""
-    def __init__(self, tags: List[str] = None, tool_names: List[str] = None):
-        super().__init__()
-        
-        for tool_name, tool_desc in tools.items():
-            # Filter by tags if specified
-            if tags:
-                tool_tags = tool_desc.get("tags", [])
-                if not any(tag in tool_tags for tag in tags):
-                    continue
-            
-            # Filter by names if specified
-            if tool_names and tool_name not in tool_names:
-                continue
-
-            self.register(Action(
-                name=tool_name,
-                function=tool_desc["function"],
-                description=tool_desc["description"],
-                parameters=tool_desc.get("parameters", {}),
-                terminal=tool_desc.get("terminal", False)
-            ))
-```
+📁 **File:** `agent_language.py`  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/agent_language.py)
 
 **What this does**: 
 - Converts your goals into system messages for the LLM

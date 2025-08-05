@@ -301,6 +301,10 @@ Try these commands:
 - "read "input_csv/your_file1.csv""
 - "exit"
 
+Here is an example of how my AI agent interacts:
+<img width="980" height="924" alt="image" src="https://github.com/user-attachments/assets/17290a9e-3ea9-4ebe-9f3c-8ba65f7b8896" />
+
+
 **Congratulations!** You now have a working AI agent that can:
 - Understand natural language requests
 - Choose appropriate tools

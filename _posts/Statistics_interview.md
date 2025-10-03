@@ -7,10 +7,15 @@ A solid understanding of probability is essential. Expect questions that test yo
 
 1 - What’s the difference between independent and mutually exclusive events?
 
-<div class="grey-box">
-    This text is now beautifully contained within the reusable grey box.
-    Since the style is defined centrally, you can change the color once and it updates everywhere!
-</div>
+/* In your blog's main CSS file */
+.grey-box {
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 10px;
+    background-color: #f7f7f7; /* Very light grey background */
+    margin: 15px 0; /* Adds some space above and below the box */
+    border-radius: 4px; /* Optional: adds slightly rounded corners */
+}
+
 
 	
 	•	The outcome of one event does not affect the outcome of the other.

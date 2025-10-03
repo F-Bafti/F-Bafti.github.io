@@ -7,9 +7,10 @@ A solid understanding of probability is essential. Expect questions that test yo
 
 1 - What’s the difference between independent and mutually exclusive events?
 
-> This text is a blockquote.
->
-> Your GitHub Pages theme may already style this with a grey box, a grey bar on the side, or an indentation. It's worth trying first!
+<div class="grey-box">
+    This text is now beautifully contained within the reusable grey box.
+    Since the style is defined centrally, you can change the color once and it updates everywhere!
+</div>
 
 	
 	•	The outcome of one event does not affect the outcome of the other.

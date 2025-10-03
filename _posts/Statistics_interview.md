@@ -1,16 +1,25 @@
-✍️ What is a Statistics Interview?
-Here’s a breakdown of common statistics topics assessed in data-related interviews.
+# ✍️ What is a Statistics Interview?
 
-Area 1 - Probability Fundamentals
+## Area 1 - Probability Fundamentals
 A solid understanding of probability is essential. Expect questions that test your grasp of probability concepts like conditional probability, Bayes' theorem, distributions, and expected values. This foundational knowledge is crucial for problem-solving in data science.
 
-Sample Questions
+### Sample Questions
 
-What’s the difference between independent and mutually exclusive events?
-Explain Bayes' theorem and provide an example of its use.
-How do you calculate the probability of at least one event occurring?
-Describe the concept of conditional probability with an example.
-What’s the expected value of a random variable?
+1 - What’s the difference between independent and mutually exclusive events?
+	•	Independent events:
+	•	The outcome of one event does not affect the outcome of the other.
+	•	Example: Flipping a coin and rolling a die. The coin being heads doesn’t change the chance of rolling a 4.
+	•	Mathematically: P(A \cap B) = P(A) \times P(B).
+	•	Mutually exclusive events:
+	•	The events cannot happen at the same time.
+	•	Example: Rolling a die → getting a 3 and getting a 5 are mutually exclusive (you can’t roll both at once).
+	•	Mathematically: P(A \cap B) = 0.
+
+  
+2 - Explain Bayes' theorem and provide an example of its use.
+3- How do you calculate the probability of at least one event occurring?
+4- Describe the concept of conditional probability with an example.
+5- What’s the expected value of a random variable?
 💡
 Tip: Memorize basic probability formulas and do drills to hone in solving probability teaser problems.
 

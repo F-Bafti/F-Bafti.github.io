@@ -7,13 +7,10 @@ A solid understanding of probability is essential. Expect questions that test yo
 
 1 - What’s the difference between independent and mutually exclusive events?
 
-	<div style="background-color: #f6f8fa; padding: 10px; border-radius: 5px;">
-		** Independent events: **
-
-	<p style="background-color:#f6f8fa; padding:10px; border-radius:6px;">
-	> <strong>This is bold inside a gray box</strong><br>
-> And you can add more text here.
-> </p>
+	<div style="background-color:#f6f8fa; padding:12px; border-radius:6px; border:1px solid #d0d7de;">
+Here is some text inside a gray box.
+You can put **Markdown** inside too, like **bold** or *italic*.
+</div>
 	•	The outcome of one event does not affect the outcome of the other.
 	•	Example: Flipping a coin and rolling a die. The coin being heads doesn’t change the chance of rolling a 4.
 	•	Mathematically: P(A \cap B) = P(A) \times P(B).

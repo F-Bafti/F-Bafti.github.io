@@ -7,14 +7,15 @@ A solid understanding of probability is essential. Expect questions that test yo
 
 1 - What’s the difference between independent and mutually exclusive events?
 
-/* In your blog's main CSS file */
-.grey-box {
-    border: 1px solid #ccc; /* Light grey border */
-    padding: 10px;
-    background-color: #f7f7f7; /* Very light grey background */
-    margin: 15px 0; /* Adds some space above and below the box */
-    border-radius: 4px; /* Optional: adds slightly rounded corners */
-}
+<div class="grey-box">
+    This is the important text that needs to be highlighted.
+    
+    You can include **Markdown formatting** inside the div, like bold text,
+    or even a simple list:
+    
+    * Item one
+    * Item two
+</div>
 
 
 	

@@ -6,7 +6,13 @@ A solid understanding of probability is essential. Expect questions that test yo
 ### Sample Questions
 
 1 - What’s the difference between independent and mutually exclusive events?
-	•	Independent events:
+
+	<div style="background-color: #f6f8fa; padding: 10px; border-radius: 5px;">
+		** Independent events: **
+
+	<strong>This is bold inside a gray box</strong><br>
+	You can put multiple lines here.
+	</div>
 	•	The outcome of one event does not affect the outcome of the other.
 	•	Example: Flipping a coin and rolling a die. The coin being heads doesn’t change the chance of rolling a 4.
 	•	Mathematically: P(A \cap B) = P(A) \times P(B).

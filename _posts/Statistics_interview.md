@@ -7,7 +7,7 @@ A solid understanding of probability is essential. Expect questions that test yo
 
 1 - What’s the difference between independent and mutually exclusive events?
 
-<div class="grey-box">
+```
     This is the important text that needs to be highlighted.
     
     You can include **Markdown formatting** inside the div, like bold text,
@@ -15,8 +15,7 @@ A solid understanding of probability is essential. Expect questions that test yo
     
     * Item one
     * Item two
-</div>
-
+```
 
 	
 	•	The outcome of one event does not affect the outcome of the other.

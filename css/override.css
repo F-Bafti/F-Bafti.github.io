@@ -43,20 +43,3 @@ hr {
   font-size: 2.5em;
   opacity: 0.3;
 }
-
-.grey-box {
-    /* Border: 1 pixel solid, using a light-to-medium grey color (#aaa) */
-    border: 1px solid #aaa; 
-    
-    /* Padding: Space around the content inside the box */
-    padding: 15px; 
-    
-    /* Background: A very light grey color for the fill */
-    background-color: #f7f7f7; 
-    
-    /* Margin: Space above and below the box, keeping it separate from other content */
-    margin: 20px 0; 
-    
-    /* Optional: Small rounded corners */
-    border-radius: 5px; 
-}

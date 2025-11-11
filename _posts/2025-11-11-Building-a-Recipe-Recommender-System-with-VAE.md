@@ -1,8 +1,6 @@
 # Building a Recipe Recommender System with VAE
-author: "Fahimeh Baftizadeh"
-date: 2025-11-11
 
-
+## Introduction
 In this blog post, we will explore a technique to build a **recipe recommender system**.
 
 The data was obtained from Kaggle, originally scraped from [food.com](https://www.food.com). It contains **522,517 recipes** from **312 different categories**. Each recipe includes information such as cooking times, servings, ingredients, nutrition, instructions, and more.

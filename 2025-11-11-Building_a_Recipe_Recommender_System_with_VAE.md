@@ -1,8 +1,7 @@
----
+
 title: "Building a Recipe Recommender System with VAE"
 author: "Fahimeh Baftizadeh"
 date: 2025-11-11
----
 
 In this blog post, we will explore a technique to build a **recipe recommender system**.
 

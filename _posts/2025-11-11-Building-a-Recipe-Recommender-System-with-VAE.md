@@ -1,4 +1,4 @@
-# Building a Recipe Recommender System with VAE
+# Recipe Recommender System with VAE
 
 ### Introduction 
 
@@ -46,7 +46,7 @@ After downloading the data from Kaggle (`irkaal/foodcom-recipes-and-reviews`), w
 
 The first step in preprocessing is **exploring missing values**. We inspect the dataset to find columns with many `NaN` values and remove them to simplify further analysis. 
 
-#### Selecting Important Features and Handling Outliers
+#### - Selecting Important Features and Handling Outliers
 
 After removing columns with too many missing values, we focus on the most relevant features for our model.
 
@@ -70,3 +70,17 @@ After removing columns with too many missing values, we focus on the most releva
 - `RecipeInstructions`
 
 Some numeric columns contain **outliers**. To handle them, we retain only the data points that fall within the **99.5th percentile** for each column. This helps prevent extreme values from skewing the model training while keeping almost all of the data.
+
+#### - Text Embeddings with all-MiniLM-L6-v2
+
+Before performing dimensionality reduction or building our model, we need to convert the unstructured text from recipe names, ingredients, and instructions into a numerical format that a machine learning model can understand. This process is called **text embedding**. For this, we use the **all-MiniLM-L6-v2** pre-trained model.
+
+##### What is MiniLM?
+
+`all-MiniLM-L6-v2` is a compact, pre-trained language model designed to generate high-quality sentence embeddings. It is part of a family of efficient models that are much faster and smaller than the original BERT models, while still maintaining competitive accuracy.
+
+##### Why we chose this model
+
+- **Efficiency**: MiniLM is a distilled version of a larger language model. It runs significantly faster and requires much less memory, making it practical for large-scale systems without losing too much performance.  
+- **High Performance**: Despite its smaller size, MiniLM effectively captures semantic meaning. For example, it understands that *"diced tomatoes and basil"* and *"chopped tomatoes with fresh herbs"* are conceptually similar.  
+- **Vector Output (384 Dimensions)**: Each recipe text input is transformed into a dense 384-dimensional vector, providing a high-fidelity numerical representation of the recipe's content and complexity.

@@ -84,3 +84,17 @@ Before performing dimensionality reduction or building our model, we need to con
 - **Efficiency**: MiniLM is a distilled version of a larger language model. It runs significantly faster and requires much less memory, making it practical for large-scale systems without losing too much performance.  
 - **High Performance**: Despite its smaller size, MiniLM effectively captures semantic meaning. For example, it understands that *"diced tomatoes and basil"* and *"chopped tomatoes with fresh herbs"* are conceptually similar.  
 - **Vector Output (384 Dimensions)**: Each recipe text input is transformed into a dense 384-dimensional vector, providing a high-fidelity numerical representation of the recipe's content and complexity.
+
+### 1.3 Exploring the Data & Why Use a Machine Learning Model
+
+After scaling the numeric data and generating vector embeddings for the text data, we saved the cleaned dataset and started analyzing it to see if we could cluster recipes based on their input features and potentially begin recommending similar recipes.  
+
+All of this analysis can be found in the notebook:  
+📁 **File:** `Why_ML_Model.ipynb`  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/Why_ML_Model.ipynb)  
+
+In the notebook, we performed **PCA analysis** to reduce dimensionality. By looking at the explained variance, it became clear that we would need **more than 50 principal components** to capture 98% of the variance in the data.  
+
+Next, we attempted to estimate the number of clusters for a **KMeans** algorithm by plotting the inertia (sum of squared distances to the nearest cluster center) for different values of `k`. The “elbow method” helps identify where adding more clusters stops significantly reducing inertia.  
+
+Unfortunately, no meaningful structure emerged from this analysis. This motivated us to move on to a **Variational Autoencoder (VAE)** approach, which could learn a more expressive latent representation of the recipes and enable more effective recommendations.

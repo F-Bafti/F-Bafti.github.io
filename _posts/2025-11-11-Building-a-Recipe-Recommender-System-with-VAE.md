@@ -15,6 +15,7 @@ The steps for building the recommender system are as follows:
 2. **Preprocessing**  
    - Scale numeric data  
    - Create vector embeddings for textual data such as ingredients and instructions
+   - Why did we decided to use VAE
 
 
 3. **Modeling with Variational Autoencoder (VAE)**  
@@ -46,7 +47,7 @@ After downloading the data from Kaggle (`irkaal/foodcom-recipes-and-reviews`), w
 
 The first step in preprocessing is **exploring missing values**. We inspect the dataset to find columns with many `NaN` values and remove them to simplify further analysis. 
 
-### 1.1 Selecting Important Features and Handling Outliers
+### Part 2: Selecting Important Features and Handling Outliers
 
 After removing columns with too many missing values, we focus on the most relevant features for our model.
 
@@ -71,7 +72,7 @@ After removing columns with too many missing values, we focus on the most releva
 
 Some numeric columns contain **outliers**. To handle them, we retain only the data points that fall within the **99.5th percentile** for each column. This helps prevent extreme values from skewing the model training while keeping almost all of the data.
 
-### 1.2 Text Embeddings with all-MiniLM-L6-v2
+### 2.1 Text Embeddings with all-MiniLM-L6-v2
 
 Before performing dimensionality reduction or building our model, we need to convert the unstructured text from recipe names, ingredients, and instructions into a numerical format that a machine learning model can understand. This process is called **text embedding**. For this, we use the **all-MiniLM-L6-v2** pre-trained model.
 
@@ -85,7 +86,7 @@ Before performing dimensionality reduction or building our model, we need to con
 - **High Performance**: Despite its smaller size, MiniLM effectively captures semantic meaning. For example, it understands that *"diced tomatoes and basil"* and *"chopped tomatoes with fresh herbs"* are conceptually similar.  
 - **Vector Output (384 Dimensions)**: Each recipe text input is transformed into a dense 384-dimensional vector, providing a high-fidelity numerical representation of the recipe's content and complexity.
 
-### 1.3 Exploring the Data & Why Use a Machine Learning Model
+### 2.2 Exploring the Data & Why Use a Machine Learning Model
 
 After scaling the numeric data and generating vector embeddings for the text data, we saved the cleaned dataset and started analyzing it to see if we could cluster recipes based on their input features and potentially begin recommending similar recipes.  
 
@@ -98,3 +99,43 @@ In the notebook, we performed **PCA analysis** to reduce dimensionality. By look
 Next, we attempted to estimate the number of clusters for a **KMeans** algorithm by plotting the inertia (sum of squared distances to the nearest cluster center) for different values of `k`. The “elbow method” helps identify where adding more clusters stops significantly reducing inertia.  
 
 Unfortunately, no meaningful structure emerged from this analysis. This motivated us to move on to a **Variational Autoencoder (VAE)** approach, which could learn a more expressive latent representation of the recipes and enable more effective recommendations.
+
+
+### Part 3: Building the Variational Autoencoder (VAE) for Recipe Embeddings
+
+After exploring the dataset and seeing that simple clustering did not reveal meaningful structure, we turned to a **Variational Autoencoder (VAE)** to learn a more expressive latent representation of recipes.
+
+The architecture we used consists of **three main components**:
+📁 **File:** `model.py`  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/model.py) 
+
+#### 3.1 Encoder
+The encoder takes two types of inputs:
+
+- **Numeric features** (like calories, fat, protein, etc.)
+- **Text embeddings** (generated from recipe names, ingredients, and instructions using `all-MiniLM-L6-v2`)
+
+Each input branch is processed separately through fully connected layers:
+
+- Numeric branch: 20 → 64 → 32  
+- Text branch: 768 → 128 → 32  
+
+The outputs are concatenated and transformed into two vectors: **mu** and **log variance**, representing the parameters of the latent Gaussian distribution. We then use the **reparameterization trick** to sample a latent vector `z`.
+
+#### 3.2 Decoder
+The decoder reconstructs the original inputs from the latent vector:
+
+- Numeric decoder: latent → 32 → numeric features  
+- Text decoder: latent → 128 → 256 → text embeddings  
+
+By reconstructing both numeric and text data, the VAE learns a compact, meaningful representation of recipes in the latent space.
+
+#### 3.3 Loss Function
+The model is trained using a combination of:
+
+- **Reconstruction Loss** (Mean Squared Error for numeric and text inputs)  
+- **KL Divergence** (ensures the latent space approximates a Gaussian distribution)
+
+We also added **weights** to balance numeric and text reconstruction, and an adjustable KL term to control regularization.  
+
+This setup allows the VAE to capture complex relationships between recipe features that simpler models cannot, enabling effective recipe recommendations based on similarity in the learned latent space.

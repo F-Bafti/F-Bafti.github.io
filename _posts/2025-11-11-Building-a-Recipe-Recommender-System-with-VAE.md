@@ -2,7 +2,7 @@
 
 ### Introduction
 
-The reviews dataset contains **1,401,982 reviews** from **271,907 users**, providing details like author, rating, review text, and more.
+The reviews dataset contains **522,517 recipes** from **271,907 users**, providing details like author, recipe instructions, nutrition facts and more.
 
 ### Workflow Overview
 

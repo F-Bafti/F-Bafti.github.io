@@ -1,178 +1,233 @@
-# 🧁 Recipe Recommender System with VAE
+# Recipe Recommender System with VAE
 
-### Introduction  
+### Introduction
 
-The reviews dataset contains **1,401,982 reviews** from **271,907 users**, providing details like author, rating, review text, and more.  
+The reviews dataset contains **1,401,982 reviews** from **271,907 users**, providing details like author, rating, review text, and more.
 
-### Workflow Overview  
+### Workflow Overview
 
 The steps for building the recommender system are as follows:
 
 1. **Data Download and Cleaning**  
-   Download and clean the datasets, handling missing values and inconsistencies.
+   We first download the datasets and clean them, handling missing values and inconsistencies.
 
 2. **Preprocessing**  
    - Scale numeric data  
-   - Create vector embeddings for textual data (ingredients, instructions)  
-   - Decide why to use a VAE-based model  
+   - Create vector embeddings for textual data such as ingredients and instructions  
+   - Explain the motivation for using a Variational Autoencoder (VAE)
 
 3. **Modeling with Variational Autoencoder (VAE)**  
    - Build a VAE to learn latent representations of recipes  
    - Optimize hyperparameters for better performance  
-   - Create a latent space for all recipes  
+   - Create a latent space for all recipes
 
 4. **Recommendation**  
-   Recommend similar recipes based on the learned latent space.  
+   Based on liked recipes, recommend similar ones using the learned latent space.
 
-We also provide a notebook explaining **why machine learning is essential** for this task, especially for handling large and complex datasets.  
-
----
-
-### 🧩 Part 1: Data Exploration and Preprocessing  
-
-📁 **File:** `Data_Exploration_Preparation.ipynb`  
-🔗 [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/Data_Exploration_Preparation.ipynb)  
-
-After downloading the data from Kaggle (`irkaal/foodcom-recipes-and-reviews`), we load them into CSV files. The **recipe dataframe** contains:  
-
-`RecipeId`, `Name`, `AuthorId`, `AuthorName`, `CookTime`, `PrepTime`, `DatePublished`, `Description`, `Images`, `RecipeCategory`, `Keywords`, `RecipeIngredientQuantities`, `ReviewCount`, `Calories`, `FatContent`, `SaturatedFatContent`, `CholesterolContent`, `SodiumContent`, `CarbohydrateContent`, `FiberContent`, `SugarContent`, `ProteinContent`, `RecipeServings`, `RecipeYield`, `RecipeInstructions`.
-
-> We focus only on the recipes dataset and do not use the reviews.  
-
-We first explore missing values and remove columns with excessive `NaN`s to simplify analysis.  
+We also provide a notebook analysis explaining **why machine learning is useful for this task**, and why traditional non-ML methods may not perform well for large and complex datasets.
 
 ---
 
-### ⚙️ Part 2: Selecting Important Features and Handling Outliers  
+### Part 1: Data Exploration and Preprocessing
 
-We focus on the most relevant features for our model.  
+All the data exploration and preprocessing analysis can be found in the following notebook:  
 
-**Numeric columns kept:**  
-Calories, FatContent, SaturatedFatContent, CholesterolContent, SodiumContent, CarbohydrateContent, FiberContent, SugarContent, ProteinContent  
+📁 **File:** Data_Exploration_Preparation.ipynb  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/Data_Exploration_Preparation.ipynb)
 
-**Text columns kept:**  
-Name, RecipeCategory, RecipeIngredientParts, RecipeInstructions  
+After downloading the data from Kaggle (`irkaal/foodcom-recipes-and-reviews`), we load them into CSV files. The **recipe dataframe** includes columns such as:
 
-Outliers are trimmed to the **99.5th percentile** for each numeric feature, keeping nearly all data while avoiding skew.  
+- RecipeId, Name, AuthorId, AuthorName, CookTime, PrepTime, DatePublished, Description, Images, RecipeCategory, Keywords  
+- RecipeIngredientQuantities, ReviewCount, Calories, FatContent, SaturatedFatContent, CholesterolContent, SodiumContent, CarbohydrateContent, FiberContent, SugarContent, ProteinContent  
+- RecipeServings, RecipeYield, RecipeInstructions
 
----
+> In this project, we focus on the recipes only and do not use the reviews dataset.
 
-### 🧠 2.1 Text Embeddings with `all-MiniLM-L6-v2`
-
-To process unstructured text (recipe names, ingredients, and instructions), we use the **`all-MiniLM-L6-v2`** pre-trained model to generate 384-dimensional embeddings.  
-
-**Why MiniLM?**  
-- Compact and efficient (distilled model of BERT)  
-- Captures semantic similarity between phrases  
-- Produces high-quality embeddings quickly  
+The first preprocessing step involves **exploring missing values**. We inspect the dataset, identify columns with many NaN values, and remove them to simplify the analysis.
 
 ---
 
-### 📊 2.2 Exploring the Data — Why Use Machine Learning  
+### Part 2: Selecting Important Features and Handling Outliers
 
-📁 **File:** `Why_ML_Model.ipynb`  
-🔗 [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/Why_ML_Model.ipynb)  
+After removing columns with excessive missing values, we focus on the most relevant features for the model.
 
-We scaled numeric data, generated text embeddings, and saved the cleaned dataset for exploratory analysis.  
+**Numeric columns kept:**
 
-**PCA Analysis:**  
-Dimensionality reduction with PCA showed that **50+ components** were required to explain 98% of the variance — too many for practical visualization.  
+- Calories  
+- FatContent  
+- SaturatedFatContent  
+- CholesterolContent  
+- SodiumContent  
+- CarbohydrateContent  
+- FiberContent  
+- SugarContent  
+- ProteinContent  
 
-**KMeans Clustering:**  
-We plotted inertia versus cluster number (`k`) to find an “elbow point.”  
-However, no clear cluster structure appeared, indicating the need for a more powerful nonlinear model — leading us to use a **Variational Autoencoder (VAE)**.  
+**Text columns kept:**
 
----
+- Name  
+- RecipeCategory  
+- RecipeIngredientParts  
+- RecipeInstructions  
 
-### 🧮 Part 3: Building the Variational Autoencoder (VAE)
-
-📁 **File:** `model.py`  
-🔗 [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/model.py)  
-
-#### Encoder  
-Processes numeric features and text embeddings through separate branches:  
-- Numeric: 20 → 64 → 32  
-- Text: 768 → 128 → 32  
-
-Outputs **μ** and **logσ²**, used to sample latent vector `z` via reparameterization.  
-
-#### Decoder  
-Reconstructs both numeric and text inputs from the latent vector:  
-- Numeric: latent → 32 → numeric features  
-- Text: latent → 128 → 256 → text embeddings  
-
-#### Loss Function  
-Total loss = weighted sum of numeric/text reconstruction + KL divergence.  
-
-We used:  
-- Weighted numeric/text reconstruction  
-- Adjustable KL term  
-- **KL annealing** for training stability  
-
-#### Training  
-- 100 epochs, batch size 512  
-- Early KL warm-up  
-- Multiple experiments with varied weights (`WEIGHT_TEXT`, `WEIGHT_NUMERIC`, `KL_WEIGHT`)  
-- Saved checkpoints, loss curves, and latent embeddings  
-
-This setup helps capture rich relationships between ingredients, nutrition, and instructions.  
+Some numeric columns contain **outliers**. To address them, we retain only the data points within the **99.5th percentile** for each column, reducing skew while preserving most of the data.
 
 ---
 
-### 📈 Part 4: Model Analysis and Recommendations  
+### 2.1 Text Embeddings with all-MiniLM-L6-v2
 
-📁 **File:** `analysis.ipynb`  
+Before dimensionality reduction or model building, unstructured text from recipe names, ingredients, and instructions is converted into numerical form — a process called **text embedding**. For this, we use the **all-MiniLM-L6-v2** pre-trained model.
 
-We analyzed training curves and latent distributions to confirm stable training.  
+#### What is MiniLM?
 
-#### Loss Components  
+all-MiniLM-L6-v2 is a compact, pre-trained language model designed for generating high-quality sentence embeddings. It’s part of a family of efficient models that are faster and smaller than BERT while maintaining strong accuracy.
 
-\[
-\mathcal{L}_{total} = 
-\frac{1}{N} (w_{num} L_{recon}^{num} + w_{text} L_{recon}^{text} + w_{KL} L_{KL})
-\]
+#### Why we chose this model
 
-Increasing each weight affects its corresponding term as expected, confirming interpretable training behavior.  
-
----
-
-### 🍳 Part 5: Consensus Recommendation Across Models  
-
-📁 **File:** `recommendations_consensus.ipynb`  
-🔗 [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/recommendations_consensus.ipynb)  
-
-After training several VAE models, we analyzed their 32-dimensional latent spaces with K-Means and UMAP. Most showed strong structure; one experienced mild posterior collapse.  
-
-To improve reliability, we used a **consensus strategy**:  
-1. Generate top-5 similar recipes per model  
-2. Aggregate all recommendations  
-3. Keep only recipes appearing in ≥3 models  
-
-This consensus ensures stable and interpretable recommendations across models.  
+- **Efficiency:** MiniLM runs much faster and uses less memory than larger models, making it practical for large datasets.  
+- **High Performance:** Despite its size, it captures semantic relationships effectively — for instance, recognizing that *“diced tomatoes and basil”* and *“chopped tomatoes with fresh herbs”* are conceptually similar.  
+- **Vector Output (384 Dimensions):** Each recipe text is transformed into a 384-dimensional dense vector, representing its meaning and structure.
 
 ---
 
-### 🍽️ Example Output  
+### 2.2 Exploring the Data & Why Use a Machine Learning Model
 
-**Liked Recipe**  
+After scaling numeric data and generating embeddings for text data, we saved the cleaned dataset and analyzed it to explore whether clustering could group similar recipes.
+
+📁 **File:** Why_ML_Model.ipynb  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/Why_ML_Model.ipynb)
+
+Using **PCA**, we found that over 50 principal components were needed to explain 98% of the variance. We also tried **KMeans** clustering, testing multiple values of k using the elbow method. However, the clusters did not show clear structure.  
+
+This outcome motivated us to move to a **VAE-based approach**, capable of learning deeper and more expressive latent features.
+
+---
+
+### Part 3: Building the Variational Autoencoder (VAE)
+
+Since traditional clustering didn’t yield strong structure, we used a **VAE** to learn richer latent representations of recipes.
+
+📁 **File:** model.py  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/model.py)
+
+The VAE architecture has three main components: **Encoder**, **Decoder**, and **Loss Function**.
+
+#### 3.1 Encoder
+
+The encoder processes both **numeric features** (e.g., calories, fat, protein) and **text embeddings** (from names, ingredients, and instructions).  
+Each branch is processed through dense layers before being merged into latent variables — **mu** and **log variance** — which define the latent Gaussian distribution. Using the **reparameterization trick**, we sample the latent vector *z*.
+
+#### 3.2 Decoder
+
+The decoder reconstructs numeric and text inputs from the latent vector, learning compact and meaningful representations of recipes.
+
+#### 3.3 Loss Function
+
+The model optimizes a weighted combination of:
+
+- **Reconstruction Loss** for numeric and text data  
+- **KL Divergence**, which regularizes the latent space  
+
+Weights balance numeric and text importance, while an adjustable KL term fine-tunes regularization.
+
+#### 3.4 Training the VAE
+
+We trained the VAE with preprocessed data split into **train**, **validation**, and **test** sets.  
+Key experiments tuned the balance between reconstruction weights and the KL regularization term.  
+We used **KL annealing**, gradually increasing its weight to stabilize training.  
+
+Training ran for **100 epochs** with a **batch size of 512**. After each experiment, we saved:
+
+- Model checkpoints  
+- Loss history  
+- Latent embeddings for the test set  
+
+This approach produced robust, interpretable representations that captured both numeric and textual recipe information.
+
+---
+
+### Part 4: Analysis of Model Output and Recommendations
+
+Post-training analysis was done in `analysis.ipynb`, inspecting **loss curves** and **latent distributions** for model quality.
+
+#### VAE Loss Function
+
+The model minimizes a weighted loss:
+
+$$
+\mathcal{L}_{\text{total}} =
+\frac{1}{N} \Big(
+w_{\text{num}} \cdot \mathcal{L}_{\text{recon}}^{\text{num}} +
+w_{\text{text}} \cdot \mathcal{L}_{\text{recon}}^{\text{text}} +
+w_{\text{KL}} \cdot \mathcal{L}_{\text{KL}}
+\Big)
+$$
+
+Where:  
+- $\mathcal{L}_{\text{recon}}^{\text{num}}$ = numeric reconstruction loss  
+- $\mathcal{L}_{\text{recon}}^{\text{text}}$ = text reconstruction loss  
+- $\mathcal{L}_{\text{KL}}$ = KL divergence loss  
+- $w_{\text{num}}, w_{\text{text}}, w_{\text{KL}}$ are the respective weights  
+- $N$ = batch size  
+
+Loss plots confirmed that each weight influenced its respective component as expected, indicating stable and interpretable training.  
+
+Latent distribution visualizations showed well-behaved Gaussian structures, with minimal posterior collapse in only one configuration.
+
+---
+
+### Generating Recipe Recommendations
+
+Once trained, we used **32-dimensional latent embeddings** to recommend recipes.  
+Using **KMeans** and **UMAP** visualization, we found organized latent spaces that reflected meaningful structure.
+
+To ensure reliable recommendations, we used a **consensus-based approach**:
+
+1. Select a random set of test recipes.  
+2. Retrieve top similar recipes from each trained model.  
+3. Count how often each appears across models.  
+4. Recommend only recipes appearing in at least three models.
+
+This reduces noise and improves recommendation reliability. The output lists the original recipe with its most consistently similar ones across multiple models.
+
+---
+
+### Example Recommendations
+
+---
+
+🍽️ **Liked Recipe**  
 **ID:** 326591  
 **Name:** Golden Syrup Russian Fudge  
+**Instructions:**  
+Place all the ingredients except the vanilla into a medium-heavy saucepan. Warm gently until sugar dissolves. Bring to a gentle boil for 15–20 minutes, stirring occasionally. Remove from heat, add vanilla, and beat until thick. Pour into a greased pan, let cool, and enjoy.
 
-**Instructions (simplified):**  
-Mix ingredients (except vanilla) in a saucepan, dissolve sugar, boil until soft-ball stage (120°C), beat until thick and glossy, then cool and enjoy.  
-
-**Recommended Recipes (appearing in ≥3 models):**  
-
-1. **White Caprese Cake (Gluten-Free)** — almond-based cake with white chocolate and lemon zest  
-2. **Flaky Oatmeal-Raisin Cookies** — chewy cookies with oats, raisins, and coconut  
-3. **$25 Pumpkin Pie** — creamy, spiced pie baked in a buttery crust  
-4. **Butter Me Bananas French Toast** — layered French toast with caramelized banana butter  
+✅ **Recommended Recipes (appearing in at least 3 models):**
 
 ---
 
-### 🧾 Summary  
-
-By combining multiple VAEs and consensus filtering, we built a **robust recipe recommender** that leverages both numeric nutrition data and semantic text embeddings.  
-This approach outperforms simple clustering and creates interpretable, human-meaningful recipe suggestions.
+**Recipe ID:** 518256  
+**Name:** “White Caprese” Cake Gluten Free  
+**Instructions:**  
+Blitz almonds until finely chopped. Melt white chocolate, mix eggs with sugar and zest, combine all ingredients, bake at 170°C for 40 minutes, and dust with powdered sugar.
 
 ---
+
+**Recipe ID:** 216030  
+**Name:** “Flaky” Oatmeal-Raisin Cookies  
+**Instructions:**  
+Cream sugar and butter, stir in eggs, mix in dry ingredients, add raisins and oats, scoop dough onto sheets, flatten, and bake at 350°F for 13–15 minutes.
+
+---
+
+**Recipe ID:** 17265  
+**Name:** $25 Pumpkin Pie  
+**Instructions:**  
+Prepare crust, bake partially, mix pumpkin with sugar and spices, cook until thick, whisk with cream and milk, pour into crust, bake 25 minutes, cool, and serve with whipped cream.
+
+---
+
+**Recipe ID:** 188928  
+**Name:** “Butter Me Bananas” French Toast  
+**Instructions:**  
+Mix egg, milk, vanilla, and spices; dip bread; cook on medium-high heat; mash banana with butter; spread between toast slices; top with syrup and banana slices. Serve warm and enjoy.

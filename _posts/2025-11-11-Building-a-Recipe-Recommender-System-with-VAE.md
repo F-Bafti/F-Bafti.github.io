@@ -1,9 +1,6 @@
 # Building a Recipe Recommender System with VAE
 
-### Introduction
-In this blog post, we will explore a technique to build a **recipe recommender system**.
-
-The data was obtained from Kaggle, originally scraped from [food.com](https://www.food.com). It contains **522,517 recipes** from **312 different categories**. Each recipe includes information such as cooking times, servings, ingredients, nutrition, instructions, and more.
+### Introduction 
 
 The reviews dataset contains **1,401,982 reviews** from **271,907 users**, providing details like author, rating, review text, and more.
 
@@ -47,4 +44,29 @@ After downloading the data from Kaggle (`irkaal/foodcom-recipes-and-reviews`), w
 
 > In this project, we focus only on the recipes; we do not use the reviews dataset.
 
-The first step in preprocessing is **exploring missing values**. We inspect the dataset to find columns with many `NaN` values and remove them to simplify further analysis.
+The first step in preprocessing is **exploring missing values**. We inspect the dataset to find columns with many `NaN` values and remove them to simplify further analysis. 
+
+#### Selecting Important Features and Handling Outliers
+
+After removing columns with too many missing values, we focus on the most relevant features for our model.
+
+**Numeric columns we keep**:
+
+- `Calories`
+- `FatContent`
+- `SaturatedFatContent`
+- `CholesterolContent`
+- `SodiumContent`
+- `CarbohydrateContent`
+- `FiberContent`
+- `SugarContent`
+- `ProteinContent`
+
+**Text columns we keep**:
+
+- `Name`
+- `RecipeCategory`
+- `RecipeIngredientParts`
+- `RecipeInstructions`
+
+Some numeric columns contain **outliers**. To handle them, we retain only the data points that fall within the **99.5th percentile** for each column. This helps prevent extreme values from skewing the model training while keeping almost all of the data.

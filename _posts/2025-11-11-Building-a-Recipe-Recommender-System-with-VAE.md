@@ -1,34 +1,38 @@
 # Building a Recipe Recommender System with VAE
 
-## Introduction
+### Introduction
 In this blog post, we will explore a technique to build a **recipe recommender system**.
 
 The data was obtained from Kaggle, originally scraped from [food.com](https://www.food.com). It contains **522,517 recipes** from **312 different categories**. Each recipe includes information such as cooking times, servings, ingredients, nutrition, instructions, and more.
 
 The reviews dataset contains **1,401,982 reviews** from **271,907 users**, providing details like author, rating, review text, and more.
 
-## Workflow Overview
+### Workflow Overview
 
 The steps for building the recommender system are as follows:
 
 1. **Data Download and Cleaning**  
    We first download the datasets and clean them, handling missing values and inconsistencies.
 
+
 2. **Preprocessing**  
    - Scale numeric data  
    - Create vector embeddings for textual data such as ingredients and instructions
+
 
 3. **Modeling with Variational Autoencoder (VAE)**  
    - Build a VAE to learn latent representations of recipes  
    - Optimize hyperparameters for better performance  
    - Create a latent space for all recipes
 
+
 4. **Recommendation**  
    Based on liked recipes, recommend similar recipes using the learned latent space.
 
+
 We also provide a notebook analysis explaining **why machine learning is useful for this task**, and why traditional non-ML methods may be weaker for large and complex datasets. 
 
-## Part 1: Data Exploration and Preprocessing
+### Part 1: Data Exploration and Preprocessing
 
 All the data exploration and preprocessing analysis can be found in the following notebook:  
 

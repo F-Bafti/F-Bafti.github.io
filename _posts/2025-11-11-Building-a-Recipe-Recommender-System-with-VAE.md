@@ -7,21 +7,40 @@ The data was obtained from Kaggle, originally scraped from [food.com](https://ww
 
 The reviews dataset contains **1,401,982 reviews** from **271,907 users**, providing details like author, rating, review text, and more.
 
-## Data Cleaning and Preparation
+## Workflow Overview
 
-Before building our model, we need to clean and prepare the data. All the steps of cleaning and preparation are explained in the notebook [`Data_exploration_Preparation.ipynb`](Data_exploration_Preparation.ipynb).
+The steps for building the recommender system are as follows:
 
-Example of setting up the Kaggle API and downloading the dataset:
+1. **Data Download and Cleaning**  
+   We first download the datasets and clean them, handling missing values and inconsistencies.
 
-```python
-import os
-from kaggle.api.kaggle_api_extended import KaggleApi
+2. **Preprocessing**  
+   - Scale numeric data  
+   - Create vector embeddings for textual data such as ingredients and instructions
 
-os.environ["KAGGLE_CONFIG_DIR"] = os.path.expanduser("~/.kaggle")
+3. **Modeling with Variational Autoencoder (VAE)**  
+   - Build a VAE to learn latent representations of recipes  
+   - Optimize hyperparameters for better performance  
+   - Create a latent space for all recipes
 
-# Initialize Kaggle API
-api = KaggleApi()
-api.authenticate()
+4. **Recommendation**  
+   Based on liked recipes, recommend similar recipes using the learned latent space.
 
-# Download the dataset
-dataset_path = api.dataset_download_files("irkaal/foodcom-recipes-and-reviews", path="data", unzip=True)
+We also provide a notebook analysis explaining **why machine learning is useful for this task**, and why traditional non-ML methods may be weaker for large and complex datasets. 
+
+## Part 1: Data Exploration and Preprocessing
+
+All the data exploration and preprocessing analysis can be found in the following notebook:  
+
+📁 File: `Data_Exploration_Preparation.ipynb`  
+🔗 Source: [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/Data_Exploration_Preparation.ipynb)
+
+After downloading the data from Kaggle (`irkaal/foodcom-recipes-and-reviews`), we load them into CSV files. The **recipe dataframe** contains the following columns:
+
+- `RecipeId`, `Name`, `AuthorId`, `AuthorName`, `CookTime`, `PrepTime`, `DatePublished`, `Description`, `Images`, `RecipeCategory`, `Keywords`  
+- `RecipeIngredientQuantities`, `ReviewCount`, `Calories`, `FatContent`, `SaturatedFatContent`, `CholesterolContent`, `SodiumContent`, `CarbohydrateContent`, `FiberContent`, `SugarContent`, `ProteinContent`  
+- `RecipeServings`, `RecipeYield`, `RecipeInstructions`
+
+> In this project, we focus only on the recipes; we do not use the reviews dataset.
+
+The first step in preprocessing is **exploring missing values**. We inspect the dataset to find columns with many `NaN` values and remove them to simplify further analysis.

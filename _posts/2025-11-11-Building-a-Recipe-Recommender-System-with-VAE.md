@@ -136,6 +136,9 @@ We trained the VAE with preprocessed data split into **train**, **validation**, 
 Key experiments tuned the balance between reconstruction weights and the KL regularization term.  
 We used **KL annealing**, gradually increasing its weight to stabilize training.  
 
+📁 **File:** train.py  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/train.py)
+
 Training ran for **100 epochs** with a **batch size of 512**. After each experiment, we saved:
 
 - Model checkpoints  
@@ -149,6 +152,9 @@ This approach produced robust, interpretable representations that captured both 
 ### Part 4: Analysis of Model Output and Recommendations
 
 Post-training analysis was done in `analysis.ipynb`, inspecting **loss curves** and **latent distributions** for model quality.
+
+📁 **File:** analysis.ipynb  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/analysis.ipynb)
 
 #### VAE Loss Function
 

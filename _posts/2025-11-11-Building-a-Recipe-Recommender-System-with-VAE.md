@@ -1,7 +1,7 @@
 # Recipe Recommender System with VAE
 
 <div style="text-align: center; margin-bottom: 2em;">
-    <img src="/img/food.jpeg" alt="" style="width: 100%;"><figurecaption></figurecaption>
+    <img src="/img/food_recipe_img/food.jpeg" alt="" style="width: 100%;"><figurecaption></figurecaption>
 </div>
 
 ### Introduction
@@ -111,7 +111,7 @@ This outcome motivated us to move to a **VAE-based approach**, capable of learni
 
 Since traditional clustering didn’t yield strong structure, we used a **VAE** to learn richer latent representations of recipes.
 
-![](/img/VAE_arc.jpg)
+![](/img/food_recipe_img/VAE_arc.jpg)
 
 📁 **File:** model.py  
 🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/model.py)
@@ -186,7 +186,7 @@ Loss plots confirmed that each weight influenced its respective component as exp
 
 Latent distribution visualizations showed well-behaved Gaussian structures, with minimal posterior collapse in only one configuration.
 
-![](/img/latent.png)
+![](/img/food_recipe_img/latent.png)
 
 ---
 

@@ -1,7 +1,7 @@
 # Recipe Recommender System with VAE
 
 <div style="text-align: center; margin-bottom: 2em;">
-    <img src="https://github.com/F-Bafti/F-Bafti.github.io/blob/main/img/food_recipe_img/food.jpeg" alt="" style="width: 100%;"><figurecaption></figurecaption>
+    <img src="/img/food_recipe_img/food.jpeg" alt="" style="width: 100%;"><figurecaption></figurecaption>
 </div>
 
 ### Introduction

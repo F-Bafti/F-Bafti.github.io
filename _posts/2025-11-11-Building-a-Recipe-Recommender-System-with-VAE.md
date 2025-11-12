@@ -4,8 +4,7 @@
 
 Data was downloaded from Kaggle and originally is from food.com. The recipes dataset contains **522,517 recipes** from 312 different categories. This dataset provides information about each recipe like cooking times, servings, ingredients, nutrition, instructions, and more. 
 
-![](F-Bafti.github.io/img/food.jpeg)
-
+![](/img/food.jpeg)
 ### Workflow Overview
 
 The steps we took for building the recommender system are as follows:

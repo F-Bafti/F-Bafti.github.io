@@ -1,3 +1,9 @@
+---
+title: "Recipe Recommender System with VAE"
+date: 2025-11-12
+image: /img/food.jpeg
+---
+
 # Recipe Recommender System with VAE
 
 ### Introduction

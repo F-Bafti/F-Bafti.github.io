@@ -2,11 +2,11 @@
 
 ### Introduction
 
-The reviews dataset contains **522,517 recipes** from **271,907 users**, providing details like author, recipe instructions, nutrition facts and more.
+Data was downloaded from Kaggle and originally is from food.com. The recipes dataset contains **522,517 recipes** from 312 different categories. This dataset provides information about each recipe like cooking times, servings, ingredients, nutrition, instructions, and more. 
 
 ### Workflow Overview
 
-The steps for building the recommender system are as follows:
+The steps we took for building the recommender system are as follows:
 
 1. **Data Download and Cleaning**  
    We first download the datasets and clean them, handling missing values and inconsistencies.
@@ -76,7 +76,7 @@ Some numeric columns contain **outliers**. To address them, we retain only the d
 
 ### 2.1 Text Embeddings with all-MiniLM-L6-v2
 
-Before dimensionality reduction or model building, unstructured text from recipe names, ingredients, and instructions is converted into numerical form — a process called **text embedding**. For this, we use the **all-MiniLM-L6-v2** pre-trained model.
+Before dimensionality reduction or model building, unstructured text from recipe names, ingredients, and instructions is converted into numerical form — a process called **text embedding**. For this, we use the **all-MiniLM-L6-v2** pre-trained model. 
 
 #### What is MiniLM?
 

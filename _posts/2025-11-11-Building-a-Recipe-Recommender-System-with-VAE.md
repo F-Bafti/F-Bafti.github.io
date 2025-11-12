@@ -1,7 +1,7 @@
 # Recipe Recommender System with VAE
 
 <div style="text-align: center; margin-bottom: 2em;">
-    <img src="/img/food.jpeg" alt="" style="width: 100%;"><figurecaption>Policy gradient methods are like climbing a treacherous terrain to find the highest peak. Better use a harness like TRPO or PPO!</figurecaption>
+    <img src="/img/food.jpeg" alt="" style="width: 100%;"><figurecaption></figurecaption>
 </div>
 
 ### Introduction

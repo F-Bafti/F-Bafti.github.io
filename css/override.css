@@ -43,3 +43,44 @@ hr {
   font-size: 2.5em;
   opacity: 0.3;
 }
+
+.post-content h1,
+.post-content h2,
+.post-content h3 {
+  margin-top: 1.8em !important;
+  /* Controls the space ABOVE the heading */
+  margin-bottom: 0.6em !important;
+  /* Controls the space BELOW the heading */
+}
+
+.post-content h1 {
+  font-size: 1.9rem !important;
+}
+
+.post-content h2 {
+  font-size: 1.6rem !important;
+}
+
+.post-content h3 {
+  font-size: 1.25rem !important;
+}
+
+.post-content h4 {
+  font-size: 1.2rem; /* Even smaller */
+}
+
+.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6 {
+  font-weight: 600; /* Makes headings a bit bolder */
+  margin-top: 2em;
+  margin-bottom: 0.8em;
+}
+
+pre,
+code {
+  white-space: pre-wrap;
+  /* CSS3 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
+  overflow-wrap: break-word;
+  /* Current standard */
+}

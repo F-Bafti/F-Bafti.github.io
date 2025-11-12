@@ -1,10 +1,13 @@
 # Recipe Recommender System with VAE
 
+<div style="text-align: center; margin-bottom: 2em;">
+    <img src="/img/food.jpeg" alt="" style="width: 100%;"><figurecaption>Policy gradient methods are like climbing a treacherous terrain to find the highest peak. Better use a harness like TRPO or PPO!</figurecaption>
+</div>
+
 ### Introduction
 
 Data was downloaded from Kaggle and originally is from food.com. The recipes dataset contains **522,517 recipes** from 312 different categories. This dataset provides information about each recipe like cooking times, servings, ingredients, nutrition, instructions, and more. 
 
-![](/img/food.jpeg)
 ### Workflow Overview
 
 The steps we took for building the recommender system are as follows:

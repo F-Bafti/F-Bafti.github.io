@@ -4,7 +4,7 @@
 
 Data was downloaded from Kaggle and originally is from food.com. The recipes dataset contains **522,517 recipes** from 312 different categories. This dataset provides information about each recipe like cooking times, servings, ingredients, nutrition, instructions, and more. 
 
-![](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/images/food.jpeg)
+![](https://raw.githubusercontent.com/F-Bafti/VAE-recipe-recommender/main/vae_with_kl_annealing/images/food.jpeg)
 
 ### Workflow Overview
 
@@ -109,6 +109,8 @@ This outcome motivated us to move to a **VAE-based approach**, capable of learni
 
 Since traditional clustering didn’t yield strong structure, we used a **VAE** to learn richer latent representations of recipes.
 
+![](https://raw.githubusercontent.com/F-Bafti/VAE-recipe-recommender/main/vae_with_kl_annealing/images/VAE_arc.jpg)
+
 📁 **File:** model.py  
 🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/VAE-recipe-recommender/blob/main/vae_with_kl_annealing/model.py)
 
@@ -181,6 +183,8 @@ Where:
 Loss plots confirmed that each weight influenced its respective component as expected, indicating stable and interpretable training.  
 
 Latent distribution visualizations showed well-behaved Gaussian structures, with minimal posterior collapse in only one configuration.
+
+![](https://raw.githubusercontent.com/F-Bafti/VAE-recipe-recommender/main/vae_with_kl_annealing/images/latent.png)
 
 ---
 

@@ -49,4 +49,43 @@ When input is tensor([18, 47, 56, 57, 58,  1, 15]), the target is: 47
 When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
 
 ```
- 
+ This is super useful because we want the transformer to be able to see input as small as only one character to whatever we choose as a block size. 
+
+ ## Batching
+ Now we need to generate batches of input becasue we are not going to send the whole text at once to the transformer.  We define a function to get the batch as the following: 
+
+```
+batch_size = 4 # how many independent sequence will be process in parallel?
+block_size = 8 # what is the max context length for predictions?
+
+def get_batch(split):
+    data = train_data if split == "train" else val_data
+    ix = torch.randint(len(data) - block_size, (batch_size,))
+    x = torch.stack([data[i : i + block_size] for i in ix])
+    y = torch.stack([data[i + 1 : i+ block_size + 1] for i in ix])
+    return x, y
+
+inputs:
+torch.Size([4, 8])
+tensor([[24, 43, 58,  5, 57,  1, 46, 43],
+        [44, 53, 56,  1, 58, 46, 39, 58],
+        [52, 58,  1, 58, 46, 39, 58,  1],
+        [25, 17, 27, 10,  0, 21,  1, 54]])
+targets:
+torch.Size([4, 8])
+tensor([[43, 58,  5, 57,  1, 46, 43, 39],
+        [53, 56,  1, 58, 46, 39, 58,  1],
+        [58,  1, 58, 46, 39, 58,  1, 46],
+        [17, 27, 10,  0, 21,  1, 54, 39]])
+
+When input is: tensor([24]), target is: 43
+When input is: tensor([24, 43]), target is: 58
+When input is: tensor([24, 43, 58]), target is: 5
+When input is: tensor([24, 43, 58,  5]), target is: 57
+When input is: tensor([24, 43, 58,  5, 57]), target is: 1
+When input is: tensor([24, 43, 58,  5, 57,  1]), target is: 46
+When input is: tensor([24, 43, 58,  5, 57,  1, 46]), target is: 43
+When input is: tensor([44]), target is: 53
+When input is: tensor([44, 53]), target is: 56
+...
+```

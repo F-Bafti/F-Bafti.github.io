@@ -39,5 +39,14 @@ tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])
 This means when 18 goes in, the model should predict 47, when [18, 47] goes in, the model should predict 56. When [18, 47, 56] goes in, the model should predict 57 and so on!
 
 ```
+When input is tensor([18]), the target is: 47
+When input is tensor([18, 47]), the target is: 56
+When input is tensor([18, 47, 56]), the target is: 57
+When input is tensor([18, 47, 56, 57]), the target is: 58
+When input is tensor([18, 47, 56, 57, 58]), the target is: 1
+When input is tensor([18, 47, 56, 57, 58,  1]), the target is: 15
+When input is tensor([18, 47, 56, 57, 58,  1, 15]), the target is: 47
+When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
+
 ```
  

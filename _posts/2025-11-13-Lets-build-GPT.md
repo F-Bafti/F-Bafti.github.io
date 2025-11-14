@@ -85,7 +85,67 @@ When input is: tensor([24, 43, 58,  5]), target is: 57
 When input is: tensor([24, 43, 58,  5, 57]), target is: 1
 When input is: tensor([24, 43, 58,  5, 57,  1]), target is: 46
 When input is: tensor([24, 43, 58,  5, 57,  1, 46]), target is: 43
+When input is: tensor([24, 43, 58,  5, 57,  1, 46, 43]), target is: 39
 When input is: tensor([44]), target is: 53
 When input is: tensor([44, 53]), target is: 56
-...
+When input is: tensor([44, 53, 56]), target is: 1
+When input is: tensor([44, 53, 56,  1]), target ....
+```
+
+## Bigram Language Model
+Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.
+The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass
+takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
+
+```
+class BigramLanguageModel(nn.Module):
+
+    def __init__(self, vocab_size):
+        super().__init__()
+        self.token_embedding_table = nn.Embedding(vocab_size, vocab_size)
+
+    def forward(self, idx, targets=None):
+        # Takes input idx os shape B*T and returns a shape of B*T*vocab_size or we say (B*T*C)
+        logits = self.token_embedding_table(idx)
+        # For the cross entropy loss we shpuld first change the shape from (B*T*C) to (C*T*B)
+        if targets is None:
+            loss = None
+        else:
+            B, T, C = logits.shape
+            logits = logits.view(B*T, C)
+            targets = targets.view(B*T)
+            loss = F.cross_entropy(logits, targets)
+        return logits, loss
+    
+    def generate(self, idx, max_new_tokens):
+        # idx is (B*T) array
+        for _ in range(max_new_tokens):
+            # get the predictions
+            logits, loss = self(idx)
+            #focus only on the last time step
+            logits = logits[:, -1, :] # becomes (B, C)
+            # apply softmax to get probs
+            probs = F.softmax(logits, dim= -1) # (B, C)
+            # sample from the distribution
+            idx_next = torch.multinomial(probs, num_samples=1) # (B, 1)
+            # append sampled index to the current sequence
+            idx = torch.cat((idx, idx_next), dim=1)  # (B, T+1)
+
+        return idx
+```
+
+The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of
+next char by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
+
+Now lets see what our model can generate before any training: 
+
+```
+idx = torch.zeros((1,1), dtype=torch.long)
+idx_seq = m.generate(idx, max_new_tokens=100)[0].tolist()
+print(idx_seq)
+print(decode(idx_seq))
+
+output:
+SKIcLT;AcELMoTbvZv C?nq-QE33:CJqkOKH-q;:la!oiywkHjgChzbQ?u!3bLIgwevmyFJGUGp
+wnYWmnxKWWev-tDqXErVKLgJ
 ```

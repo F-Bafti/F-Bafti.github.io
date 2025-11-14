@@ -149,3 +149,46 @@ output:
 SKIcLT;AcELMoTbvZv C?nq-QE33:CJqkOKH-q;:la!oiywkHjgChzbQ?u!3bLIgwevmyFJGUGp
 wnYWmnxKWWev-tDqXErVKLgJ
 ```
+
+Then we use an optimizer and perform a training and bring the loss down from 4.7 to 2.4, and try to generate again. here is the houtput: 
+```
+FRI tiriddirtuce m, s nthy, es?
+Ances my:
+Lol is,
+Faurqu by ot, omyoveanouree an, y NCERENG wicos ury,'s ts yofooowe,
+AR: lleris mmeanse y ht?
+
+RUK:
+NICIUMy pen my hossoond:
+IUS:
+IXI per tow,
+I hath tund me, y Y: metosishyoco wit wo y me ald t s mpithelveigne.
+LYe EOu avemecedernildoreig
+WI burn stche bye d or.
+```
+It looks better, it is still non-sense but defenitely had changed from our first trial a lot. **But the tokens are not talking to each other and we are looking only at the last token to generate new ones. Here we are going
+to start talking about transformers where tokens will talk to each other.**
+
+
+# The mathematical trick in self-attention
+
+The token in nth location should not talk to the tokens comeing after that, it only should talk to the tokens before. So the information flows from the previous times. One way is to get the AVG information from the past tokens
+the AVG is not a good way but it can be okay for now. If we want to implement the attention in a for loop, it will look like this:
+
+```
+xbow = torch.zeros(B,T,C)
+for b in range(B):
+    for t in range(T):
+        x_prev = x[b, : t+1] # (t, C)
+        # print(x_prev.shape)
+        xbow[b, t] = torch.mean(x[b, : t+1], 0)
+```
+however we can use matrix multiplication to implement this for loop. 
+
+```
+wei = torch.tril(torch.ones(T, T))
+wei = wei / wei.sum(1, keepdim=True)
+xbow2 = wei @ x
+```
+
+And there is yet another way that we can do this:

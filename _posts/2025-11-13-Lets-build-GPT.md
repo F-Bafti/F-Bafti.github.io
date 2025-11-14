@@ -202,13 +202,18 @@ xbow3 = wei @ x
 
 # Self Attention
 
-So far with this matrix multiplication, we are doing a simple average over all the previous tokens. But we dont want it to be like this, different tokens might get info from specific tokens. In this method, each token will have a query and a key matrix. Then we perform a dot product between the key of one token with respect to the query of all the other tokens.
+# Self Attention
+
+So far with this matrix multiplication, we are doing a simple average over all the previous tokens. But we dont want it to be like this, different tokens might get info from specific tokens. In this method, each token will have a query, key and a value matrix. Then we perform a dot product between the key of one token with respect to the query of all the other tokens.
 
 Query vector roughly speaking is : What am I looking for!
 
 Key vector roughly speaking is: What do I contain!
 
+value vector roughly speaking is : What I will communicate to you (in this specific head)!
+
 When we do a dot product, then dot product will be come the "wei" matrix. Now if the query and key dot product results in a high value, then it means that those two tokens are attending to each other.
+
 
 ```
 torch.manual_seed(1337)
@@ -269,5 +274,50 @@ tensor([[[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
          [0.0522, 0.0517, 0.0961, 0.0375, 0.1024, 0.5730, 0.0872, 0.0000],
          [0.0306, 0.2728, 0.0333, 0.1409, 0.1414, 0.0582, 0.0825, 0.2402]]],
 ```
-So wei is now different for every batch and therefore it is data dependent. 
+So wei is now different for every batch and therefore it is data dependent. What does this suggesting is as the following. For example look at the first wei matrix on the top. on the 8th row, we have 0.2297 for the token 4 and 0.2391 for token 8th. This means that they have a high affinity and when we multiply x by this matrix, then those two tokens get more information from each other instead of receiving avg info from all the token. in that specific channel. 
+
+So wei is now different for every batch and therefore it is data dependent. there is one more thing about self attention. We do not multiply x by wei but instead we multiply somehting called value. so we have another matrix v similar to q and k. and we compute wei @ v instead of wei @ x
+
+```
+value = nn.Linear(C, head_size, bias=False)
+v = value(x)
+out = wei @ v
+```
+
+
+**Where does name self-attention** is coming from? since key, query and value matrices are all generated using x, it is called self-attention.
+
+one more thing we need to do before finishing the self-attention is to divide it by the square root of the head_size like it is explained in the original paper called "Attention is all you need". If we dont do that then when we multiply k and q, numbers become large and when we apply softmax on those numbers the representation becomes like one-hot vectors instead of being diffuse numbers. and what does that mean, it means that each token will receive attention from only one other token instead of receiving info from other as well in a more diffucsive way.
+
+After implementing the single-head attention layer to the model and train the model this is one example of output:
+```
+K:
+NGey
+
+Letnrad wineam:
+Kicou hitipteavimancraby whet muthe hus darge.
+
+Wind!
+IRD: Ind, tind spoof om and f.
+Sy stllalevere here me honouen fot in,
+So and, vist orby?
+Thar hous mat deest she rd?
+
+Wowin wof t, ath th ay miligiryouchth-orto mou tenges, ald pors banebe y prothetack aklel I veriplansnidierd avit for,
+KI thit ndist allll perd the:
+Acu Empoouthant, I to
+Ten mar.
+
+S:
+Bugh the I hy nd meis moh h!
+
+
+AThamen es ty I has.
+
+MI ithe thensterat blo gaar,
+A d muts ed ronur wiend tl-ou,
+Therim
+```
+
+So it looks better but still we have a long way to improve this.
 

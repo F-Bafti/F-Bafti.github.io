@@ -191,4 +191,22 @@ wei = wei / wei.sum(1, keepdim=True)
 xbow2 = wei @ x
 ```
 
-And there is yet another way that we can do this:
+And there is yet another way that we can do this using softmax which is equal o what we did before:
+
+```
+tril = torch.tril(torch.ones((T,T)))
+wei = wei.masked_fill(tril==0, float('-inf'))
+wei = F.softmax(wei, dim=-1)
+xbow3 = wei @ x
+```
+
+# Self Attention
+
+So far with this matrix multiplication, we are doing a simple average over all the previous tokens. But we dont want it to be like this, different tokens might get info from specific tokens. In this method, each token will have a query and a key matrix. Then we perform a dot product between the key of one token with respect to the query of all the other tokens.
+
+Query vector roughly speaking is : What am I looking for!
+
+Key vector roughly speaking is: What do I contain!
+
+When we do a dot product, then dot product will be come the "wei" matrix. Now if the query and key dot product results in a high value, then it means that those two tokens are attending to each other.
+

@@ -289,6 +289,13 @@ out = wei @ v
 
 one more thing we need to do before finishing the self-attention is to divide it by the square root of the head_size like it is explained in the original paper called "Attention is all you need". If we dont do that then when we multiply k and q, numbers become large and when we apply softmax on those numbers the representation becomes like one-hot vectors instead of being diffuse numbers. and what does that mean, it means that each token will receive attention from only one other token instead of receiving info from other as well in a more diffucsive way.
 
+one more thing we need to do before finishing the self-attention is to divide it by the square root of the head_size like it is explained in the original paper called "Attention is all you need". If we dont do that then when we multiply k and q, numbers become large and when we apply softmax on those numbers the representation becomes like one-hot vectors instead of being diffuse numbers. and what does that mean, it means that each token will receive attention from only one other token instead of receiving info from other as well in a more diffucsive way.
+
+```
+#therefore:
+wei = q @ k.transpose(-2, -1) * head_size**-0.5
+```
+
 After implementing the single-head attention layer to the model and train the model this is one example of output:
 ```
 K:
@@ -320,4 +327,115 @@ Therim
 ```
 
 So it looks better but still we have a long way to improve this.
+Instead of only one-attnetion head we can have multiple attention heads and when we do this and run the model again, the loss become lower which shows the model is improving and the output looks like this:
+
+```
+ITIS
+Way'm hat no It bot dich hose, onowea pavish;
+I tand tpes; he to IOnd rius dick chatthtamill vil and all of nernd ing, gold?
+Wour
+Ast; hell thore it gest nosin.
+
+WYo lour sow gone iks jepry lo em, Arow trowimad foreme wit no the
+Whours, serveardy'e wide huightalgom I st; bye
+Anerwetery into overe my yous le atilpjack thean so if hougirse youne TICANG PEveemaks to bre hand Th's of. Werxever! pargyfrooroke me Owa ther do you isty 'lid Mevesesve thich han doieanty moa pwar sind wow sad aly,.
+```
+
+Which is still not good. the thing is that we have collected info from all other tokens BUT the model did not have enough time to process that data. When went directly to create logits and outputs. So here is the place that we can add more computations to the model.
+For that we add some linear layer and then some non-linearity.
+
+```
+class FeedFroward(nn.Module):
+    """ a simple linear layer followed by non-linearity"""
+    def __init__(self, n_embd):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(n_embd, n_embd),
+            nn.ReLU(),
+        )
+    def forward(self,x):
+        return self.net(x)
+```
+
+# The communication and computation blocks in transformer
+We create another class which implements feedforward layers and multiheaded attentions blocks and then we can apply that multiple times to have a deeper network. 
+
+```
+class Block(nn.Module):
+    """ Transformer block: communication followed by computation"""
+    def __init__(self,n_embd, n_head):
+        super().__init__()
+        head_size = n_embd // n_head
+        self.sa = MultiHeadAttention(n_head, head_size) #communication
+        self.ffwd = FeedForward(n_embd) #computation
+
+    def forward(self,x):
+        x = self.sa(x)
+        x = self.ffwd(x)
+        return x
+```
+
+However the results did not improve much:
+
+```
+BOSGGETR:
+Tae yo mate figcth bikles minl was ththen;
+Bev mash neeti sheru,
+Noath,
+Tinge onnd 'rsates odary neat I paneushane:
+Tow iy nthoke fouds hede temmte wo shoac at thum my sit weoa watl, thuere?
+Neut uneth ce whe
+
+AOrusthoashct mis walslefisesh at, norl:
+Tat dhou biped, at lan bowe; lrid ird eoaI.
+
+HLESINTACDCFT:
+Te,ndne
+Wit Rlaen pasl'-to mimty Hom,
+And in wav.
+
+Sikdsp ondte
+Mler Relobe'?
+Niy do math thas nellal Cived,
+Qit mly san Aye thore it we ir it thub threr:
+Nate thoat yonttenst'r a
+```
+
+# Residual Block
+There is yet another block that we can add to the model to make the results better. it is called residual block. so we change out block implemenation as below:
+```
+class Block(nn.Module):
+    """ Transformer block: communication followed by computation"""
+    def __init__(self,n_embd, n_head):
+        super().__init__()
+        head_size = n_embd // n_head
+        self.sa = MultiHeadAttention(n_head, head_size) #communication
+        self.ffwd = FeedForward(n_embd) #computation
+
+    def forward(self,x):
+        x = x + self.sa(x)
+        x = x + self.ffwd(x)
+        return x
+```
+
+We add Layernorm layers and dropouts to the model in order to make the model better and at the end, we are able to get something which we think is good enough taking into account our input and the task that we have. Also pay attention that our model is a letter generation and not word or larger than letter tokens. 
+This model that we implemented here, is actually an encoder only model like chatgpt. We dont need an encoder to encode the text and then generate output from it. 
+
+```
+Where the house unfold these lawful blame.
+
+KING RICHARD III:
+Go, Grood Warwick's our ancest; and,
+Who nowoful light England's roye, and thereof,
+With Bolingbrod and Deck's Xan of Walion,
+Hath of Signion Buckingham's shall lie.
+
+WARWICK:
+Rightor Northumberland, Ely weep; cobscept thy fast;
+Which, he lodg me no found, tooking in the them;
+And that will practish that for Richard warm
+And all his spreading with Angelo,
+For back, I hay given me hence'll so,
+Is he maked their charter: which I prizent
+```
 

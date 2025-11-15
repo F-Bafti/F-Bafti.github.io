@@ -201,9 +201,6 @@ xbow3 = wei @ x
 ```
 
 # Self Attention
-
-# Self Attention
-
 So far with this matrix multiplication, we are doing a simple average over all the previous tokens. But we dont want it to be like this, different tokens might get info from specific tokens. In this method, each token will have a query, key and a value matrix. Then we perform a dot product between the key of one token with respect to the query of all the other tokens.
 
 Query vector roughly speaking is : What am I looking for!

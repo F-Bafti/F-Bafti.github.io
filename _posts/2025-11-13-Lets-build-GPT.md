@@ -34,7 +34,7 @@ block_size = 8
 train_data[: block_size + 1]
 ```
 
-<div style="background-color:#f0f0f0; padding:20px; border-radius:10px;">
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
  output: 
 tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])
 </div>

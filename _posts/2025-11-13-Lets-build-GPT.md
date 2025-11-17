@@ -34,10 +34,8 @@ block_size = 8
 train_data[: block_size + 1]
 ```
 
-```markdown
-output:
-tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])
-```
+> output:
+> tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])
 
 This means when 18 goes in, the model should predict 47, when [18, 47] goes in, the model should predict 56. When [18, 47, 56] goes in, the model should predict 57 and so on!
 

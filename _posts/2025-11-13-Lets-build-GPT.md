@@ -109,8 +109,8 @@ When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
 
 This approach allows the transformer to see input sequences ranging from a single character up to the full block size.
 
- ## Batching
-We also generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
+## Batching
+We generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
 
 ```
 batch_size = 4 # how many independent sequence will be process in parallel?

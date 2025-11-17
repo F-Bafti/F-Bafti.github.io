@@ -35,28 +35,21 @@ train_data[: block_size + 1]
 ```
 
 <div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
- output: 
+ output:<br>
 tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])  
 </div>
 
 This means when 18 goes in, the model should predict 47, when [18, 47] goes in, the model should predict 56. When [18, 47, 56] goes in, the model should predict 57 and so on!
 
 <div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
- When input is tensor([18]), the target is: 47  
- 
- When input is tensor([18, 47]), the target is: 56  
- 
- When input is tensor([18, 47, 56]), the target is: 57 
- 
- When input is tensor([18, 47, 56, 57]), the target is: 58 
- 
- When input is tensor([18, 47, 56, 57, 58]), the target is: 1
- 
- When input is tensor([18, 47, 56, 57, 58,  1]), the target is: 15
- 
- When input is tensor([18, 47, 56, 57, 58,  1, 15]), the target is: 47 
- 
- When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58  
+When input is tensor([18]), the target is: 47<br>
+When input is tensor([18, 47]), the target is: 56<br>
+When input is tensor([18, 47, 56]), the target is: 57<br>
+When input is tensor([18, 47, 56, 57]), the target is: 58<br>
+When input is tensor([18, 47, 56, 57, 58]), the target is: 1<br>
+When input is tensor([18, 47, 56, 57, 58,  1]), the target is: 15<br>
+When input is tensor([18, 47, 56, 57, 58,  1, 15]), the target is: 47<br>
+When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
 </div>
 
 This approach allows the transformer to see input sequences ranging from a single character up to the full block size.

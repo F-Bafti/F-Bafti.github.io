@@ -154,7 +154,7 @@ When input is: tensor([44, 53, 56,  1]), target ....<br>
 
 ## Bigram Language Model
 Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.
-The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
+The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each number takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
 
 ```
 class BigramLanguageModel(nn.Module):
@@ -193,7 +193,7 @@ class BigramLanguageModel(nn.Module):
         return idx
 ```
 
-The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of next char by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
+The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of next character by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
 
 Now lets see what our model can generate before any training: 
 

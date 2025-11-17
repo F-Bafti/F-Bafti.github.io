@@ -1,9 +1,8 @@
 # Lets Build GPT
 
-In this blog, I followed Andrey Carpathy course on youtube to build a GPT which here is a character based generative transformer model. We are not going to use the whole internet to build this model but instead we will use what is called tiny_shekspier 
-as an input. We name it input.txt. What we are going to do is to create a model that is able to generate charcater sequences that look like this text. The dataset is **Tiny Shekspear**. 
+In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—specifically, a character-based generative transformer model. We won’t use the entire internet to train this model; instead, we’ll use a small dataset called **Tiny Shakespeare**, which we save as `input.txt`. The goal is to create a model that can generate character sequences resembling this text.  
 
-This dataset jas 40000 lines and 65 characters. It is possible to build a character-level tokenizer that can tokenize a sentence to number at the character level.
+This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number.
 
 ## Tokenization
 ```
@@ -19,14 +18,14 @@ print(encode("hii there"))
 print(decode(encode('hii there')))
 ```
 
-After implementing encoder and decoder, it is possible to tokenize the whole tiny-Shakespear text to tokens and save it into a torch tensor.
+After implementing the encoder and decoder, we can tokenize the entire Tiny Shakespeare text and save it as a Torch tensor.
 
 ## Train and validation split
-We then take 90% of the text for training and the remaining 10% for validation. But we can not feed the whole text at once to the model for training. We need to send chunks of text at a time.
+We use 90% of the text for training and the remaining 10% for validation. We can’t feed the entire text to the model at once; instead, we process it in chunks.
 
 
 ## Chunking the input data
-let's assume the chunks have length of 8 character. In that block, there are 8 different examples for the model to train on. 
+Assume chunks of length 8 characters. Each chunk provides multiple training examples for the model.
 
 ```
 block_size = 8
@@ -49,10 +48,10 @@ When input is tensor([18, 47, 56, 57, 58,  1, 15]), the target is: 47
 When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
 
 ```
- This is super useful because we want the transformer to be able to see input as small as only one character to whatever we choose as a block size. 
+This approach allows the transformer to see input sequences ranging from a single character up to the full block size.
 
  ## Batching
- Now we need to generate batches of input becasue we are not going to send the whole text at once to the transformer.  We define a function to get the batch as the following: 
+We also generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
 
 ```
 batch_size = 4 # how many independent sequence will be process in parallel?
@@ -94,8 +93,7 @@ When input is: tensor([44, 53, 56,  1]), target ....
 
 ## Bigram Language Model
 Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.
-The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass
-takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
+The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
 
 ```
 class BigramLanguageModel(nn.Module):
@@ -134,8 +132,7 @@ class BigramLanguageModel(nn.Module):
         return idx
 ```
 
-The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of
-next char by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
+The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of next char by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
 
 Now lets see what our model can generate before any training: 
 
@@ -151,6 +148,7 @@ wnYWmnxKWWev-tDqXErVKLgJ
 ```
 
 Then we use an optimizer and perform a training and bring the loss down from 4.7 to 2.4, and try to generate again. here is the houtput: 
+
 ```
 FRI tiriddirtuce m, s nthy, es?
 Ances my:
@@ -166,14 +164,13 @@ I hath tund me, y Y: metosishyoco wit wo y me ald t s mpithelveigne.
 LYe EOu avemecedernildoreig
 WI burn stche bye d or.
 ```
-It looks better, it is still non-sense but defenitely had changed from our first trial a lot. **But the tokens are not talking to each other and we are looking only at the last token to generate new ones. Here we are going
-to start talking about transformers where tokens will talk to each other.**
+
+It looks better, it is still non-sense but defenitely had changed from our first trial a lot. **But the tokens are not talking to each other and we are looking only at the last token to generate new ones.** Here we are going to start talking about transformers where tokens will talk to each other.**
 
 
 # The mathematical trick in self-attention
 
-The token in nth location should not talk to the tokens comeing after that, it only should talk to the tokens before. So the information flows from the previous times. One way is to get the AVG information from the past tokens
-the AVG is not a good way but it can be okay for now. If we want to implement the attention in a for loop, it will look like this:
+The token in nth location should not talk to the tokens comeing after that, it only should talk to the tokens before. So the information flows from the previous times. One way is to get the AVG information from the past tokens the AVG is not a good way but it can be okay for now. If we want to implement the attention in a for loop, it will look like this:
 
 ```
 xbow = torch.zeros(B,T,C)
@@ -271,6 +268,7 @@ tensor([[[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
          [0.0522, 0.0517, 0.0961, 0.0375, 0.1024, 0.5730, 0.0872, 0.0000],
          [0.0306, 0.2728, 0.0333, 0.1409, 0.1414, 0.0582, 0.0825, 0.2402]]],
 ```
+
 So wei is now different for every batch and therefore it is data dependent. What does this suggesting is as the following. For example look at the first wei matrix on the top. on the 8th row, we have 0.2297 for the token 4 and 0.2391 for token 8th. This means that they have a high affinity and when we multiply x by this matrix, then those two tokens get more information from each other instead of receiving avg info from all the token. in that specific channel. 
 
 So wei is now different for every batch and therefore it is data dependent. there is one more thing about self attention. We do not multiply x by wei but instead we multiply somehting called value. so we have another matrix v similar to q and k. and we compute wei @ v instead of wei @ x

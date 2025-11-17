@@ -101,7 +101,7 @@ When input is: tensor([44, 53, 56,  1]), target ....<br>
 Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.
 The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
 
-```python
+```
 class BigramLanguageModel(nn.Module):
 
     def __init__(self, vocab_size):
@@ -142,34 +142,35 @@ The generation block takes the input sequence for each batch so the size is (B*T
 
 Now lets see what our model can generate before any training: 
 
-```markdown
+```
 idx = torch.zeros((1,1), dtype=torch.long)
 idx_seq = m.generate(idx, max_new_tokens=100)[0].tolist()
 print(idx_seq)
 print(decode(idx_seq))
-
-output:
-SKIcLT;AcELMoTbvZv C?nq-QE33:CJqkOKH-q;:la!oiywkHjgChzbQ?u!3bLIgwevmyFJGUGp
-wnYWmnxKWWev-tDqXErVKLgJ
 ```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+output:<br>
+SKIcLT;AcELMoTbvZv C?nq-QE33:CJqkOKH-q;:la!oiywkHjgChzbQ?u!3bLIgwevmyFJGUGp<br>
+wnYWmnxKWWev-tDqXErVKLgJ<br>
+</div>
 
 Then we use an optimizer and perform a training and bring the loss down from 4.7 to 2.4, and try to generate again. here is the houtput: 
 
-```markdown
-FRI tiriddirtuce m, s nthy, es?
-Ances my:
-Lol is,
-Faurqu by ot, omyoveanouree an, y NCERENG wicos ury,'s ts yofooowe,
-AR: lleris mmeanse y ht?
-
-RUK:
-NICIUMy pen my hossoond:
-IUS:
-IXI per tow,
-I hath tund me, y Y: metosishyoco wit wo y me ald t s mpithelveigne.
-LYe EOu avemecedernildoreig
-WI burn stche bye d or.
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+FRI tiriddirtuce m, s nthy, es?<br>
+Ances my:<br>
+Lol is,<br>
+Faurqu by ot, omyoveanouree an, y NCERENG wicos ury,'s ts yofooowe,<br>
+AR: lleris mmeanse y ht?<br>
+<br>
+RUK:<br>
+NICIUMy pen my hossoond:<br>
+IUS:<br>
+IXI per tow,<br>
+I hath tund me, y Y: metosishyoco wit wo y me ald t s mpithelveigne.<br>
+LYe EOu avemecedernildoreig<br>
+WI burn stche bye d or.<br>
+</div>
 
 It looks better, it is still non-sense but defenitely had changed from our first trial a lot. **But the tokens are not talking to each other and we are looking only at the last token to generate new ones.** Here we are going to start talking about transformers where tokens will talk to each other.**
 
@@ -178,7 +179,7 @@ It looks better, it is still non-sense but defenitely had changed from our first
 
 The token in nth location should not talk to the tokens comeing after that, it only should talk to the tokens before. So the information flows from the previous times. One way is to get the AVG information from the past tokens the AVG is not a good way but it can be okay for now. If we want to implement the attention in a for loop, it will look like this:
 
-```python
+```
 xbow = torch.zeros(B,T,C)
 for b in range(B):
     for t in range(T):
@@ -188,7 +189,7 @@ for b in range(B):
 ```
 however we can use matrix multiplication to implement this for loop. 
 
-```python
+```
 wei = torch.tril(torch.ones(T, T))
 wei = wei / wei.sum(1, keepdim=True)
 xbow2 = wei @ x
@@ -196,7 +197,7 @@ xbow2 = wei @ x
 
 And there is yet another way that we can do this using softmax which is equal o what we did before:
 
-```python
+```
 tril = torch.tril(torch.ones((T,T)))
 wei = wei.masked_fill(tril==0, float('-inf'))
 wei = F.softmax(wei, dim=-1)
@@ -215,7 +216,7 @@ value vector roughly speaking is : What I will communicate to you (in this speci
 When we do a dot product, then dot product will be come the "wei" matrix. Now if the query and key dot product results in a high value, then it means that those two tokens are attending to each other.
 
 
-```python
+```
 torch.manual_seed(1337)
 B, T, C = 4, 8, 32
 x = torch.randn( B, T, C)
@@ -237,50 +238,50 @@ out = wei @ x
 
 and therefore
 
-```markdown
-wei:
-tensor([[[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.1574, 0.8426, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.2088, 0.1646, 0.6266, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.5792, 0.1187, 0.1889, 0.1131, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.0294, 0.1052, 0.0469, 0.0276, 0.7909, 0.0000, 0.0000, 0.0000],
-         [0.0176, 0.2689, 0.0215, 0.0089, 0.6812, 0.0019, 0.0000, 0.0000],
-         [0.1691, 0.4066, 0.0438, 0.0416, 0.1048, 0.2012, 0.0329, 0.0000],
-         [0.0210, 0.0843, 0.0555, 0.2297, 0.0573, 0.0709, 0.2423, 0.2391]],
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+wei:<br>
+tensor([[[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.1574, 0.8426, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.2088, 0.1646, 0.6266, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.5792, 0.1187, 0.1889, 0.1131, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.0294, 0.1052, 0.0469, 0.0276, 0.7909, 0.0000, 0.0000, 0.0000],<br>
+         [0.0176, 0.2689, 0.0215, 0.0089, 0.6812, 0.0019, 0.0000, 0.0000],<br>
+         [0.1691, 0.4066, 0.0438, 0.0416, 0.1048, 0.2012, 0.0329, 0.0000],<br>
+         [0.0210, 0.0843, 0.0555, 0.2297, 0.0573, 0.0709, 0.2423, 0.2391]],<br>
+<br>
+        [[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.1687, 0.8313, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.2477, 0.0514, 0.7008, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.4410, 0.0957, 0.3747, 0.0887, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.0069, 0.0456, 0.0300, 0.7748, 0.1427, 0.0000, 0.0000, 0.0000],<br>
+         [0.0660, 0.0892, 0.0413, 0.6316, 0.1649, 0.0069, 0.0000, 0.0000],<br>
+         [0.0396, 0.2288, 0.0090, 0.2000, 0.2061, 0.1949, 0.1217, 0.0000],<br>
+         [0.3650, 0.0474, 0.0767, 0.0293, 0.3084, 0.0784, 0.0455, 0.0493]],<br>
 
-        [[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.1687, 0.8313, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.2477, 0.0514, 0.7008, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.4410, 0.0957, 0.3747, 0.0887, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.0069, 0.0456, 0.0300, 0.7748, 0.1427, 0.0000, 0.0000, 0.0000],
-         [0.0660, 0.0892, 0.0413, 0.6316, 0.1649, 0.0069, 0.0000, 0.0000],
-         [0.0396, 0.2288, 0.0090, 0.2000, 0.2061, 0.1949, 0.1217, 0.0000],
-         [0.3650, 0.0474, 0.0767, 0.0293, 0.3084, 0.0784, 0.0455, 0.0493]],
+        [[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.4820, 0.5180, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.1705, 0.4550, 0.3745, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.0074, 0.7444, 0.0477, 0.2005, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.8359, 0.0416, 0.0525, 0.0580, 0.0119, 0.0000, 0.0000, 0.0000],<br>
+         [0.1195, 0.2061, 0.1019, 0.1153, 0.1814, 0.2758, 0.0000, 0.0000],<br>
+         [0.0065, 0.0589, 0.0372, 0.3063, 0.1325, 0.3209, 0.1378, 0.0000],<br>
+         [0.1416, 0.1519, 0.0384, 0.1643, 0.1207, 0.1254, 0.0169, 0.2408]],<br>
 
-        [[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.4820, 0.5180, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.1705, 0.4550, 0.3745, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.0074, 0.7444, 0.0477, 0.2005, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.8359, 0.0416, 0.0525, 0.0580, 0.0119, 0.0000, 0.0000, 0.0000],
-         [0.1195, 0.2061, 0.1019, 0.1153, 0.1814, 0.2758, 0.0000, 0.0000],
-         [0.0065, 0.0589, 0.0372, 0.3063, 0.1325, 0.3209, 0.1378, 0.0000],
-         [0.1416, 0.1519, 0.0384, 0.1643, 0.1207, 0.1254, 0.0169, 0.2408]],
-
-        [[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.6369, 0.3631, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.2586, 0.7376, 0.0038, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.4692, 0.3440, 0.1237, 0.0631, 0.0000, 0.0000, 0.0000, 0.0000],
-         [0.1865, 0.4680, 0.0353, 0.1854, 0.1248, 0.0000, 0.0000, 0.0000],
-         [0.0828, 0.7479, 0.0017, 0.0735, 0.0712, 0.0228, 0.0000, 0.0000],
-         [0.0522, 0.0517, 0.0961, 0.0375, 0.1024, 0.5730, 0.0872, 0.0000],
-         [0.0306, 0.2728, 0.0333, 0.1409, 0.1414, 0.0582, 0.0825, 0.2402]]],
-```
+        [[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.6369, 0.3631, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.2586, 0.7376, 0.0038, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.4692, 0.3440, 0.1237, 0.0631, 0.0000, 0.0000, 0.0000, 0.0000],<br>
+         [0.1865, 0.4680, 0.0353, 0.1854, 0.1248, 0.0000, 0.0000, 0.0000],<br>
+         [0.0828, 0.7479, 0.0017, 0.0735, 0.0712, 0.0228, 0.0000, 0.0000],<br>
+         [0.0522, 0.0517, 0.0961, 0.0375, 0.1024, 0.5730, 0.0872, 0.0000],<br>
+         [0.0306, 0.2728, 0.0333, 0.1409, 0.1414, 0.0582, 0.0825, 0.2402]]],<br>
+</div>
 
 So wei is now different for every batch and therefore it is data dependent. What does this suggesting is as the following. For example look at the first wei matrix on the top. on the 8th row, we have 0.2297 for the token 4 and 0.2391 for token 8th. This means that they have a high affinity and when we multiply x by this matrix, then those two tokens get more information from each other instead of receiving avg info from all the token. in that specific channel. 
 
 So wei is now different for every batch and therefore it is data dependent. there is one more thing about self attention. We do not multiply x by wei but instead we multiply somehting called value. so we have another matrix v similar to q and k. and we compute wei @ v instead of wei @ x
 
-```python
+```
 value = nn.Linear(C, head_size, bias=False)
 v = value(x)
 out = wei @ v
@@ -293,61 +294,62 @@ one more thing we need to do before finishing the self-attention is to divide it
 
 one more thing we need to do before finishing the self-attention is to divide it by the square root of the head_size like it is explained in the original paper called "Attention is all you need". If we dont do that then when we multiply k and q, numbers become large and when we apply softmax on those numbers the representation becomes like one-hot vectors instead of being diffuse numbers. and what does that mean, it means that each token will receive attention from only one other token instead of receiving info from other as well in a more diffucsive way.
 
-```markdown
-#therefore:
-wei = q @ k.transpose(-2, -1) * head_size**-0.5
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+#therefore:<br>
+wei = q @ k.transpose(-2, -1) * head_size**-0.5<br>
+</div>
 
 After implementing the single-head attention layer to the model and train the model this is one example of output:
 
-```markdown
-K:
-NGey
-
-Letnrad wineam:
-Kicou hitipteavimancraby whet muthe hus darge.
-
-Wind!
-IRD: Ind, tind spoof om and f.
-Sy stllalevere here me honouen fot in,
-So and, vist orby?
-Thar hous mat deest she rd?
-
-Wowin wof t, ath th ay miligiryouchth-orto mou tenges, ald pors banebe y prothetack aklel I veriplansnidierd avit for,
-KI thit ndist allll perd the:
-Acu Empoouthant, I to
-Ten mar.
-
-S:
-Bugh the I hy nd meis moh h!
-
-
-AThamen es ty I has.
-
-MI ithe thensterat blo gaar,
-A d muts ed ronur wiend tl-ou,
-Therim
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+K:<br>
+NGey<br>
+<br>
+Letnrad wineam:<br>
+Kicou hitipteavimancraby whet muthe hus darge.<br>
+<br>
+Wind!<br>
+IRD: Ind, tind spoof om and f.<br>
+Sy stllalevere here me honouen fot in,<br>
+So and, vist orby?<br>
+Thar hous mat deest she rd?<br>
+<br>
+Wowin wof t, ath th ay miligiryouchth-orto mou tenges, ald pors banebe y prothetack aklel I veriplansnidierd avit for,<br>
+KI thit ndist allll perd the:<br>
+Acu Empoouthant, I to<br>
+Ten mar.<br>
+<br>
+S:<br>
+Bugh the I hy nd meis moh h!<br>
+<br>
+<br>
+AThamen es ty I has.<br>
+<br>
+MI ithe thensterat blo gaar,<br>
+A d muts ed ronur wiend tl-ou,<br>
+Therim<br>
+</div>
 
 So it looks better but still we have a long way to improve this.
 Instead of only one-attnetion head we can have multiple attention heads and when we do this and run the model again, the loss become lower which shows the model is improving and the output looks like this:
 
-```markdown
-ITIS
-Way'm hat no It bot dich hose, onowea pavish;
-I tand tpes; he to IOnd rius dick chatthtamill vil and all of nernd ing, gold?
-Wour
-Ast; hell thore it gest nosin.
-
-WYo lour sow gone iks jepry lo em, Arow trowimad foreme wit no the
-Whours, serveardy'e wide huightalgom I st; bye
-Anerwetery into overe my yous le atilpjack thean so if hougirse youne TICANG PEveemaks to bre hand Th's of. Werxever! pargyfrooroke me Owa ther do you isty 'lid Mevesesve thich han doieanty moa pwar sind wow sad aly,.
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+ITIS<br>
+Way'm hat no It bot dich hose, onowea pavish;<br>
+I tand tpes; he to IOnd rius dick chatthtamill vil and all of nernd ing, gold?<br>
+Wour<br>
+Ast; hell thore it gest nosin.<br>
+<br>
+WYo lour sow gone iks jepry lo em, Arow trowimad foreme wit no the<br>
+Whours, serveardy'e wide huightalgom I st; bye<br>
+Anerwetery into overe my yous le atilpjack thean so if hougirse youne TICANG PEveemaks to bre hand Th's of. Werxever! pargyfrooroke me Owa ther do you isty 'lid Mevesesve thich han doieanty<br>
+ moa pwar sind wow sad aly,.<br>
+</div>
 
 Which is still not good. the thing is that we have collected info from all other tokens BUT the model did not have enough time to process that data. When went directly to create logits and outputs. So here is the place that we can add more computations to the model.
 For that we add some linear layer and then some non-linearity.
 
-```python
+```
 class FeedFroward(nn.Module):
     """ a simple linear layer followed by non-linearity"""
     def __init__(self, n_embd):
@@ -363,7 +365,7 @@ class FeedFroward(nn.Module):
 # The communication and computation blocks in transformer
 We create another class which implements feedforward layers and multiheaded attentions blocks and then we can apply that multiple times to have a deeper network. 
 
-```python
+```
 class Block(nn.Module):
     """ Transformer block: communication followed by computation"""
     def __init__(self,n_embd, n_head):
@@ -380,34 +382,34 @@ class Block(nn.Module):
 
 However the results did not improve much:
 
-```markdown
-BOSGGETR:
-Tae yo mate figcth bikles minl was ththen;
-Bev mash neeti sheru,
-Noath,
-Tinge onnd 'rsates odary neat I paneushane:
-Tow iy nthoke fouds hede temmte wo shoac at thum my sit weoa watl, thuere?
-Neut uneth ce whe
-
-AOrusthoashct mis walslefisesh at, norl:
-Tat dhou biped, at lan bowe; lrid ird eoaI.
-
-HLESINTACDCFT:
-Te,ndne
-Wit Rlaen pasl'-to mimty Hom,
-And in wav.
-
-Sikdsp ondte
-Mler Relobe'?
-Niy do math thas nellal Cived,
-Qit mly san Aye thore it we ir it thub threr:
-Nate thoat yonttenst'r a
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+BOSGGETR:<br>
+Tae yo mate figcth bikles minl was ththen;<br>
+Bev mash neeti sheru,<br>
+Noath,<br>
+Tinge onnd 'rsates odary neat I paneushane:<br>
+Tow iy nthoke fouds hede temmte wo shoac at thum my sit weoa watl, thuere?<br>
+Neut uneth ce whe<br>
+<br>
+AOrusthoashct mis walslefisesh at, norl:<br>
+Tat dhou biped, at lan bowe; lrid ird eoaI.<br>
+<br>
+HLESINTACDCFT:<br>
+Te,ndne<br>
+Wit Rlaen pasl'-to mimty Hom,<br>
+And in wav.<br>
+<br>
+Sikdsp ondte<br>
+Mler Relobe'?<br>
+Niy do math thas nellal Cived,<br>
+Qit mly san Aye thore it we ir it thub threr:<br>
+Nate thoat yonttenst'r a<br>
+</div>
 
 # Residual Block
 There is yet another block that we can add to the model to make the results better. it is called residual block. so we change out block implemenation as below:
 
-```python
+```
 class Block(nn.Module):
     """ Transformer block: communication followed by computation"""
     def __init__(self,n_embd, n_head):
@@ -426,21 +428,21 @@ We add Layernorm layers and dropouts to the model in order to make the model bet
 This model that we implemented here, is actually an encoder only model like chatgpt. We dont need an encoder to encode the text and then generate output from it. 
 
 
-```markdown
-Where the house unfold these lawful blame.
-
-KING RICHARD III:
-Go, Grood Warwick's our ancest; and,
-Who nowoful light England's roye, and thereof,
-With Bolingbrod and Deck's Xan of Walion,
-Hath of Signion Buckingham's shall lie.
-
-WARWICK:
-Rightor Northumberland, Ely weep; cobscept thy fast;
-Which, he lodg me no found, tooking in the them;
-And that will practish that for Richard warm
-And all his spreading with Angelo,
-For back, I hay given me hence'll so,
-Is he maked their charter: which I prizent
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+Where the house unfold these lawful blame.<br>
+<br>
+KING RICHARD III:<br>
+Go, Grood Warwick's our ancest; and,<br>
+Who nowoful light England's roye, and thereof,<br>
+With Bolingbrod and Deck's Xan of Walion,<br>
+Hath of Signion Buckingham's shall lie.<br>
+<br>
+WARWICK:<br>
+Rightor Northumberland, Ely weep; cobscept thy fast;<br>
+Which, he lodg me no found, tooking in the them;<br>
+And that will practish that for Richard warm<br>
+And all his spreading with Angelo,<br>
+For back, I hay given me hence'll so,<br>
+Is he maked their charter: which I prizent<br>
+</div>
 

@@ -6,7 +6,7 @@ In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—sp
 
 📁 **Github:** [Repo](https://github.com/karpathy/ng-video-lecture)
 
-This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number.
+This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number. In the following we built a simple encoder, decoder at the character level for our purpose.
 
 ## Tokenization
 ```

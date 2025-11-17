@@ -7,7 +7,7 @@ In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—sp
 This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number.
 
 ## Tokenization
-```python
+```
 #string to integer
 stoi = {ch:i for i, ch in enumerate(chars)}
 #integer to string
@@ -29,7 +29,7 @@ We use 90% of the text for training and the remaining 10% for validation. We can
 ## Chunking the input data
 Assume chunks of length 8 characters. Each chunk provides multiple training examples for the model.
 
-```python
+```
 block_size = 8
 train_data[: block_size + 1]
 ```
@@ -57,7 +57,7 @@ This approach allows the transformer to see input sequences ranging from a singl
  ## Batching
 We also generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
 
-```python
+```
 batch_size = 4 # how many independent sequence will be process in parallel?
 block_size = 8 # what is the max context length for predictions?
 
@@ -82,7 +82,7 @@ tensor([[43, 58,  5, 57,  1, 46, 43, 39],
         [17, 27, 10,  0, 21,  1, 54, 39]])
 ```
 
-```markdown
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
 When input is: tensor([24]), target is: 43
 When input is: tensor([24, 43]), target is: 58
 When input is: tensor([24, 43, 58]), target is: 5
@@ -95,7 +95,7 @@ When input is: tensor([44]), target is: 53
 When input is: tensor([44, 53]), target is: 56
 When input is: tensor([44, 53, 56]), target is: 1
 When input is: tensor([44, 53, 56,  1]), target ....
-```
+</div>
 
 ## Bigram Language Model
 Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.

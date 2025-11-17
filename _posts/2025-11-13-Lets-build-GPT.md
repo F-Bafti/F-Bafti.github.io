@@ -1,6 +1,8 @@
 # Lets Build GPT
 
-In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—specifically, a character-based generative transformer model. We won’t use the entire internet to train this model; instead, we’ll use a small dataset called **Tiny Shakespeare**, which we save as `input.txt`. The goal is to create a model that can generate character sequences resembling this text.  
+In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—specifically, a character-based generative transformer model. We won’t use the entire internet to train this model; instead, we’ll use a small dataset called **Tiny Shakespeare**, which we save as `input.txt`. The goal is to create a model that can generate character sequences resembling this text.  Here is the link to his course on youtube:
+
+🔗 **Source:** [View on Youtube](https://www.youtube.com/watch?v=kCc8FmEb1nY&t=6084s)
 
 This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number.
 

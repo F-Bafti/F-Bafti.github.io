@@ -262,11 +262,11 @@ xbow3 = wei @ x
 # Self Attention
 So far with this matrix multiplication, we are doing a simple average over all the previous tokens. But we dont want it to be like this, different tokens might get info from specific tokens. In this method, each token will have a query, key and a value matrix. Then we perform a dot product between the key of one token with respect to the query of all the other tokens.
 
-Query vector roughly speaking is : What am I looking for!
+**Query vector** roughly speaking is : What am I looking for!
 
-Key vector roughly speaking is: What do I contain!
+**Key vector** roughly speaking is: What do I contain!
 
-value vector roughly speaking is : What I will communicate to you (in this specific head)!
+**value vector** roughly speaking is : What I will communicate to you (in this specific head)!
 
 When we do a dot product, then dot product will be come the "wei" matrix. Now if the query and key dot product results in a high value, then it means that those two tokens are attending to each other.
 

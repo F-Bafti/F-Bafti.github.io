@@ -7,7 +7,7 @@ In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—sp
 This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number.
 
 ## Tokenization
-```
+```python
 #string to integer
 stoi = {ch:i for i, ch in enumerate(chars)}
 #integer to string
@@ -33,6 +33,7 @@ Assume chunks of length 8 characters. Each chunk provides multiple training exam
 block_size = 8
 train_data[: block_size + 1]
 ```
+
 ```markdown
 output:
 tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])
@@ -80,6 +81,7 @@ tensor([[43, 58,  5, 57,  1, 46, 43, 39],
         [58,  1, 58, 46, 39, 58,  1, 46],
         [17, 27, 10,  0, 21,  1, 54, 39]])
 ```
+
 ```markdown
 When input is: tensor([24]), target is: 43
 When input is: tensor([24, 43]), target is: 58

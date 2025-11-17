@@ -27,17 +27,18 @@ We use 90% of the text for training and the remaining 10% for validation. We can
 ## Chunking the input data
 Assume chunks of length 8 characters. Each chunk provides multiple training examples for the model.
 
-```
+```python
 block_size = 8
 train_data[: block_size + 1]
-
+```
+```markdown
 output:
 tensor([18, 47, 56, 57, 58,  1, 15, 47, 58])
 ```
 
 This means when 18 goes in, the model should predict 47, when [18, 47] goes in, the model should predict 56. When [18, 47, 56] goes in, the model should predict 57 and so on!
 
-```
+```markdown
 When input is tensor([18]), the target is: 47
 When input is tensor([18, 47]), the target is: 56
 When input is tensor([18, 47, 56]), the target is: 57
@@ -53,7 +54,7 @@ This approach allows the transformer to see input sequences ranging from a singl
  ## Batching
 We also generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
 
-```
+```python
 batch_size = 4 # how many independent sequence will be process in parallel?
 block_size = 8 # what is the max context length for predictions?
 
@@ -76,7 +77,8 @@ tensor([[43, 58,  5, 57,  1, 46, 43, 39],
         [53, 56,  1, 58, 46, 39, 58,  1],
         [58,  1, 58, 46, 39, 58,  1, 46],
         [17, 27, 10,  0, 21,  1, 54, 39]])
-
+```
+```markdown
 When input is: tensor([24]), target is: 43
 When input is: tensor([24, 43]), target is: 58
 When input is: tensor([24, 43, 58]), target is: 5

@@ -6,6 +6,50 @@ In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—sp
 
 📁 **Github:** [Repo](https://github.com/karpathy/ng-video-lecture)
 
+Here is the first 1000 character of this dataset:
+
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+First Citizen:<br>
+Before we proceed any further, hear me speak.<br>
+<br>
+All:<br>
+Speak, speak.<br>
+<br>
+First Citizen:<br>
+You are all resolved rather to die than to famish?<br>
+<br>
+All:<br>
+Resolved. resolved.<br>
+<br>
+First Citizen:<br>
+First, you know Caius Marcius is chief enemy to the people.<br>
+<br>
+All:<br>
+We know't, we know't.<br>
+<br>
+First Citizen:<br>
+Let us kill him, and we'll have corn at our own price.<br>
+Is't a verdict?<br>
+<br>
+All:<br>
+No more talking on't; let it be done: away, away!<br>
+<br>
+Second Citizen:<br>
+One word, good citizens.<br>
+<br>
+First Citizen:<br>
+We are accounted poor citizens, the patricians good.<br>
+What authority surfeits on would relieve us: if they<br>
+would yield us but the superfluity, while it were<br>
+wholesome, we might guess they relieved us humanely;<br>
+but they think we are too dear: the leanness that<br>
+afflicts us, the object of our misery, is as an<br>
+inventory to particularise their abundance; our<br>
+sufferance is a gain to them Let us revenge this with<br>
+our pikes, ere we become rakes: for the gods know I<br>
+speak this in hunger for bread, not in thirst for revenge.<br>
+</div>
+
 This dataset has **40,000 lines** and **65 unique characters**, making it possible to build a character-level tokenizer that converts each character into a number. In the following we built a simple encoder, decoder at the character level for our purpose.
 
 ## Tokenization
@@ -26,6 +70,13 @@ After implementing the encoder and decoder, we can tokenize the entire Tiny Shak
 
 ## Train and validation split
 We use 90% of the text for training and the remaining 10% for validation. We can’t feed the entire text to the model at once; instead, we process it in chunks.
+
+```
+# Lets do train and test split
+n = int(len(text) * 0.9)
+train_data = data[:n]
+val_data = data[n:]
+```
 
 
 ## Chunking the input data

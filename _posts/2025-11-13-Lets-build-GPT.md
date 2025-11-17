@@ -2,9 +2,7 @@
 
 In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—specifically, a character-based generative transformer model. We won’t use the entire internet to train this model; instead, we’ll use a small dataset called **Tiny Shakespeare**, which we save as `input.txt` and you can download it from his github linked below. The goal is to create a model that can generate character sequences resembling this text.  Here is the link to his course on youtube:
 
-<div style="text-align: center; margin-bottom: 2em;">
-    <img src="/img/Shakespear.jpeg" alt="" style="width: 50%;"><figurecaption></figurecaption>
-</div>
+<img src="/img/Tiny_GPT/Shakespear.jpeg" alt="Shakespeare" style="width: 50%; height: auto; display: inline-block;">
 
 🔗 **Source:** [View on Youtube](https://www.youtube.com/watch?v=kCc8FmEb1nY&t=6084s)
 

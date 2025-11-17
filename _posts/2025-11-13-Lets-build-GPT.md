@@ -50,7 +50,6 @@ When input is tensor([18, 47, 56, 57, 58]), the target is: 1
 When input is tensor([18, 47, 56, 57, 58,  1]), the target is: 15
 When input is tensor([18, 47, 56, 57, 58,  1, 15]), the target is: 47
 When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
-
 ```
 This approach allows the transformer to see input sequences ranging from a single character up to the full block size.
 
@@ -101,7 +100,7 @@ When input is: tensor([44, 53, 56,  1]), target ....
 Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.
 The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
 
-```
+```python
 class BigramLanguageModel(nn.Module):
 
     def __init__(self, vocab_size):
@@ -142,7 +141,7 @@ The generation block takes the input sequence for each batch so the size is (B*T
 
 Now lets see what our model can generate before any training: 
 
-```
+```markdown
 idx = torch.zeros((1,1), dtype=torch.long)
 idx_seq = m.generate(idx, max_new_tokens=100)[0].tolist()
 print(idx_seq)
@@ -155,7 +154,7 @@ wnYWmnxKWWev-tDqXErVKLgJ
 
 Then we use an optimizer and perform a training and bring the loss down from 4.7 to 2.4, and try to generate again. here is the houtput: 
 
-```
+```markdown
 FRI tiriddirtuce m, s nthy, es?
 Ances my:
 Lol is,
@@ -178,7 +177,7 @@ It looks better, it is still non-sense but defenitely had changed from our first
 
 The token in nth location should not talk to the tokens comeing after that, it only should talk to the tokens before. So the information flows from the previous times. One way is to get the AVG information from the past tokens the AVG is not a good way but it can be okay for now. If we want to implement the attention in a for loop, it will look like this:
 
-```
+```python
 xbow = torch.zeros(B,T,C)
 for b in range(B):
     for t in range(T):
@@ -188,7 +187,7 @@ for b in range(B):
 ```
 however we can use matrix multiplication to implement this for loop. 
 
-```
+```python
 wei = torch.tril(torch.ones(T, T))
 wei = wei / wei.sum(1, keepdim=True)
 xbow2 = wei @ x
@@ -196,7 +195,7 @@ xbow2 = wei @ x
 
 And there is yet another way that we can do this using softmax which is equal o what we did before:
 
-```
+```python
 tril = torch.tril(torch.ones((T,T)))
 wei = wei.masked_fill(tril==0, float('-inf'))
 wei = F.softmax(wei, dim=-1)
@@ -215,7 +214,7 @@ value vector roughly speaking is : What I will communicate to you (in this speci
 When we do a dot product, then dot product will be come the "wei" matrix. Now if the query and key dot product results in a high value, then it means that those two tokens are attending to each other.
 
 
-```
+```python
 torch.manual_seed(1337)
 B, T, C = 4, 8, 32
 x = torch.randn( B, T, C)
@@ -236,7 +235,8 @@ out = wei @ x
 ```
 
 and therefore
-```
+
+```markdown
 wei:
 tensor([[[1.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
          [0.1574, 0.8426, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000],
@@ -279,7 +279,7 @@ So wei is now different for every batch and therefore it is data dependent. What
 
 So wei is now different for every batch and therefore it is data dependent. there is one more thing about self attention. We do not multiply x by wei but instead we multiply somehting called value. so we have another matrix v similar to q and k. and we compute wei @ v instead of wei @ x
 
-```
+```python
 value = nn.Linear(C, head_size, bias=False)
 v = value(x)
 out = wei @ v
@@ -292,13 +292,14 @@ one more thing we need to do before finishing the self-attention is to divide it
 
 one more thing we need to do before finishing the self-attention is to divide it by the square root of the head_size like it is explained in the original paper called "Attention is all you need". If we dont do that then when we multiply k and q, numbers become large and when we apply softmax on those numbers the representation becomes like one-hot vectors instead of being diffuse numbers. and what does that mean, it means that each token will receive attention from only one other token instead of receiving info from other as well in a more diffucsive way.
 
-```
+```markdown
 #therefore:
 wei = q @ k.transpose(-2, -1) * head_size**-0.5
 ```
 
 After implementing the single-head attention layer to the model and train the model this is one example of output:
-```
+
+```markdown
 K:
 NGey
 
@@ -330,7 +331,7 @@ Therim
 So it looks better but still we have a long way to improve this.
 Instead of only one-attnetion head we can have multiple attention heads and when we do this and run the model again, the loss become lower which shows the model is improving and the output looks like this:
 
-```
+```markdown
 ITIS
 Way'm hat no It bot dich hose, onowea pavish;
 I tand tpes; he to IOnd rius dick chatthtamill vil and all of nernd ing, gold?
@@ -345,7 +346,7 @@ Anerwetery into overe my yous le atilpjack thean so if hougirse youne TICANG PEv
 Which is still not good. the thing is that we have collected info from all other tokens BUT the model did not have enough time to process that data. When went directly to create logits and outputs. So here is the place that we can add more computations to the model.
 For that we add some linear layer and then some non-linearity.
 
-```
+```python
 class FeedFroward(nn.Module):
     """ a simple linear layer followed by non-linearity"""
     def __init__(self, n_embd):
@@ -361,7 +362,7 @@ class FeedFroward(nn.Module):
 # The communication and computation blocks in transformer
 We create another class which implements feedforward layers and multiheaded attentions blocks and then we can apply that multiple times to have a deeper network. 
 
-```
+```python
 class Block(nn.Module):
     """ Transformer block: communication followed by computation"""
     def __init__(self,n_embd, n_head):
@@ -378,7 +379,7 @@ class Block(nn.Module):
 
 However the results did not improve much:
 
-```
+```markdown
 BOSGGETR:
 Tae yo mate figcth bikles minl was ththen;
 Bev mash neeti sheru,
@@ -404,7 +405,8 @@ Nate thoat yonttenst'r a
 
 # Residual Block
 There is yet another block that we can add to the model to make the results better. it is called residual block. so we change out block implemenation as below:
-```
+
+```python
 class Block(nn.Module):
     """ Transformer block: communication followed by computation"""
     def __init__(self,n_embd, n_head):
@@ -422,7 +424,8 @@ class Block(nn.Module):
 We add Layernorm layers and dropouts to the model in order to make the model better and at the end, we are able to get something which we think is good enough taking into account our input and the task that we have. Also pay attention that our model is a letter generation and not word or larger than letter tokens. 
 This model that we implemented here, is actually an encoder only model like chatgpt. We dont need an encoder to encode the text and then generate output from it. 
 
-```
+
+```markdown
 Where the house unfold these lawful blame.
 
 KING RICHARD III:

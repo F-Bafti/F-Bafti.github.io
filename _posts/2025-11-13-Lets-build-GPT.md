@@ -83,18 +83,18 @@ tensor([[43, 58,  5, 57,  1, 46, 43, 39],
 ```
 
 <div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
-When input is: tensor([24]), target is: 43
-When input is: tensor([24, 43]), target is: 58
-When input is: tensor([24, 43, 58]), target is: 5
-When input is: tensor([24, 43, 58,  5]), target is: 57
-When input is: tensor([24, 43, 58,  5, 57]), target is: 1
-When input is: tensor([24, 43, 58,  5, 57,  1]), target is: 46
-When input is: tensor([24, 43, 58,  5, 57,  1, 46]), target is: 43
-When input is: tensor([24, 43, 58,  5, 57,  1, 46, 43]), target is: 39
-When input is: tensor([44]), target is: 53
-When input is: tensor([44, 53]), target is: 56
-When input is: tensor([44, 53, 56]), target is: 1
-When input is: tensor([44, 53, 56,  1]), target ....
+When input is: tensor([24]), target is: 43<br>
+When input is: tensor([24, 43]), target is: 58<br>
+When input is: tensor([24, 43, 58]), target is: 5<br>
+When input is: tensor([24, 43, 58,  5]), target is: 57<br>
+When input is: tensor([24, 43, 58,  5, 57]), target is: 1<br>
+When input is: tensor([24, 43, 58,  5, 57,  1]), target is: 46<br>
+When input is: tensor([24, 43, 58,  5, 57,  1, 46]), target is: 43<br>
+When input is: tensor([24, 43, 58,  5, 57,  1, 46, 43]), target is: 39<br>
+When input is: tensor([44]), target is: 53<br>
+When input is: tensor([44, 53]), target is: 56<br>
+When input is: tensor([44, 53, 56]), target is: 1<br>
+When input is: tensor([44, 53, 56,  1]), target ....<br>
 </div>
 
 ## Bigram Language Model

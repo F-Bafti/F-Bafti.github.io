@@ -118,7 +118,7 @@ class Action:
         return self.function(**args)
 ```
 
-and then we have an action registery which is a container to storr all available actions:
+through the "execute", the agent actually execute the action. And then we have an action registery which is a container to storr all available actions:
 
 ```python
 class ActionRegistry:
@@ -138,7 +138,57 @@ class ActionRegistry:
         return list(self.actions.values())
 ```
 
+What action registry does is looking up an action by its name and finding all the action availables. 
+In the **Memory** class, we create another container to store the conversation history with the agent. 
 
+```
+class Memory:
+    def __init__(self):
+        self.items = []  # Basic conversation history
+
+    # Adds a new memory item to the end of the list
+    def add_memory(self, memory: dict):
+        """Add memory to working memory"""
+        self.items.append(memory)
+
+    # Returns the stored memories as a list
+    def get_memories(self, limit: int = None) -> List[Dict]:
+        """Get formatted conversation history for prompt"""
+        return self.items[:limit]
+
+    # Creates a new Memory object with system messages filtered out
+    def copy_without_system_memories(self):
+        """Return a copy of the memory without system memories"""
+        filtered_items = [m for m in self.items if m["type"] != "system"]
+        memory = Memory()
+        memory.items = filtered_items
+        return memory
+```
+
+Finally in **Environment** class, is where the **Action** actually get executed. It has two important sections, in "try", it attempts to run the action. if it works, then it takes the results and format in nicely for the user but it fails to excute the function, the agent should catch the error and returns the error information instead of crashing.
+
+```
+class Environment:
+    def execute_action(self, action: Action, args: dict) -> dict:
+        """Execute an action and return the result."""
+        try:
+            result = action.execute(**args)
+            return self.format_result(result)
+        except Exception as e:
+            return {
+                "tool_executed": False,
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            }
+
+    def format_result(self, result: Any) -> dict:
+        """Format the result with metadata."""
+        return {
+            "tool_executed": True,
+            "result": result,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S%z")
+        }
+```
 
 ## Step 4: Tool Registration System
 

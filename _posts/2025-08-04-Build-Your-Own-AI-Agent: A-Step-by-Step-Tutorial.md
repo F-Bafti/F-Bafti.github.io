@@ -28,29 +28,28 @@ pip install cohere langchain-cohere pandas rapidfuzz python-dotenv
 
 Create a new directory for your project and set up the following structure:
 
-<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
-<br>my_agent/
-<br>├── .env                    # API keys
-<br>├── main.py                 # Entry point
-<br>├── GAME.py                 # Core framework
-<br>├── language.py             # Agent communication
-<br>├── agent.py                # Main agent class
-<br>├── response_generator.py   # LLM integration
-<br>├── tool_registry.py        # Tool management
-<br>└── tools/
-<br>    ├── file_tools.py       # File operations
-<br>    └── system_tools.py     # System utilities
-</div>
+```bash
+my_agent/
+├── .env                    # API keys
+├── main.py                 # Entry point
+├── GAME.py                 # Core framework
+├── language.py             # Agent communication
+├── agent.py                # Main agent class
+├── response_generator.py   # LLM integration
+├── tool_registry.py        # Tool management
+└── tools/
+     ├── file_tools.py       # File operations
+     └── system_tools.py     # System utilities
+```
 
 ## Step 2: Environment Setup
 
 First, create your `.env` file:
 
-<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
-<br>COHERE_API_KEY=your_cohere_api_key_here
-<br>OPENAI_API_KEY=your_oepnai_api_key_here(if you are using openai)
-</div>
-
+```bash
+COHERE_API_KEY=your_cohere_api_key_here
+OPENAI_API_KEY=your_oepnai_api_key_here(if you are using openai)
+```
 ## Step 3: Building the GAME Framework
 
 Let's start with the foundation: Create GAME.py.
@@ -69,7 +68,8 @@ What this does:
 **4. Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.<br>
 
 In the **Goal** class we have the following: 
-```
+
+```python
 @dataclass(frozen=True)
 class Goal:
     priority: int
@@ -78,7 +78,7 @@ class Goal:
 ```
 dataclass is a class from dataclasses and allows us to define classes and make them frozen. It is ideal for Goal becasue the goal of the agent should not change during the execution of tasks.  In the Goal class we define each goal, their proirity, name and description. For example since we are building an AI agent here that should read CSV files, find their headers and cleanup and consolidate them, later in the main.py we have the following lines when we use Goal class.
 
-```
+```python
 from GAME import Goal
 
 goals = [
@@ -99,7 +99,7 @@ goals = [
 
 The next class is **Action**. It creates a wrapper around a python function to make it available to the AI agent.  It has name, function, description, parameters, terminal attributes. 
 
-```
+```python
 class Action:
     def __init__(self,
                  name: str,
@@ -120,8 +120,7 @@ class Action:
 
 and then we have an action registery which is a container to storr all available actions:
 
-```
-# Creates a container to store all available actions
+```python
 class ActionRegistry:
     def __init__(self):
         self.actions = {}

@@ -141,7 +141,7 @@ class ActionRegistry:
 What action registry does is looking up an action by its name and finding all the action availables. 
 In the **Memory** class, we create another container to store the conversation history with the agent. 
 
-```
+```python
 class Memory:
     def __init__(self):
         self.items = []  # Basic conversation history
@@ -167,7 +167,7 @@ class Memory:
 
 Finally in **Environment** class, is where the **Action** actually get executed. It has two important sections, in "try", it attempts to run the action. if it works, then it takes the results and format in nicely for the user but it fails to excute the function, the agent should catch the error and returns the error information instead of crashing.
 
-```
+```python
 class Environment:
     def execute_action(self, action: Action, args: dict) -> dict:
         """Execute an action and return the result."""
@@ -218,18 +218,20 @@ Create tool_registry.py: This is where the magic happens for automatically regis
 
 ## Step 5: Your First Tool
 
-Create `tools/system_tools.py` with a simple termination tool:
+Create `tools/file_tools.py` with a simple termination tool:
 
 ```python
-# tools/system_tools.py
-from tool_registry import register_tool
-
-@register_tool(tags=["system"], terminal=True)
-def terminate(message: str) -> str:
-    """Terminates the agent's execution with a final message."""
-    return f"{message}\nTerminating..."
+@register_tool(tags=["file_operations", "list"])
+def list_csv_files() -> List[str]:
+    """
+    USAGE: Use when user asks 'list csv files', 'show csvs', or 'what csvs are here' while already in the target directory.
+    
+    Lists all CSV files in the current working directory only.
+    """
+    return sorted([file for file in os.listdir(".") if file.lower().endswith(".csv")])  
 ```
-**What this does**: This creates a simple tool that ends the agent's execution. The `terminal=True` parameter tells the agent this action should stop the conversation.
+
+**What this does**: This creates a simple tool that list all CSV files in the current working directory only.
 
 For more examples see:
 📁 File: file_tools.py, system_tools

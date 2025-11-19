@@ -63,10 +63,10 @@ Now let's have a look at the following code:
 This code has 4 classes for Goal, Action, Memory and Environment. Later on in your main.py, you will write down explicitly what is the goal, how to get the action and what is the memory for your agent, but the definition of the class and its attributes are set in this code.
 What this does:
 
-**1. Goals** give your agent direction. The frozen=True makes them immutable - once you define a goal, it can't be accidentally changed.
-**2. Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
-**3. Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
-**4. Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
+**1. Goals** give your agent direction. The frozen=True makes them immutable - once you define a goal, it can't be accidentally changed.<br>
+**2. Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.<br>
+**3. Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).<br>
+**4. Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.<br>
 
 In the Goal class we have the following: 
 ```

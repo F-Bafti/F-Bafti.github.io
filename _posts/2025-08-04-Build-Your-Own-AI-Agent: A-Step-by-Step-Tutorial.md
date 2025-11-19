@@ -17,7 +17,7 @@ Let's start simple and gradually add complexity!
 Before we begin, make sure you have:
 - Python 3.8+
 - Basic understanding of Python classes and decorators
-- A Cohere API key (free from https://dashboard.cohere.com/)
+- A API key, you can use Cohere like me (free from https://dashboard.cohere.com/), or you can use Openai or other platforms as well
 - The following packages installed:
 
 ```bash
@@ -33,13 +33,13 @@ my_agent/
 ├── .env                    # API keys
 ├── main.py                 # Entry point
 ├── GAME.py                 # Core framework
-├── agent_language.py       # Agent communication
-├── agent_loop.py          # Main agent logic
+├── language.py             # Agent communication
+├── agent.py                # Main agent class
 ├── response_generator.py   # LLM integration
-├── tool_registry.py       # Tool management
+├── tool_registry.py        # Tool management
 └── tools/
-    ├── file_tools.py      # File operations
-    └── system_tools.py    # System utilities
+    ├── file_tools.py       # File operations
+    └── system_tools.py     # System utilities
 ```
 
 ## Step 2: Environment Setup
@@ -48,6 +48,7 @@ First, create your `.env` file:
 
 ```env
 COHERE_API_KEY=your_cohere_api_key_here
+OPENAI_API_KEY=your_oepnai_api_key_here(if you are using openai)
 ```
 
 ## Step 3: Building the GAME Framework

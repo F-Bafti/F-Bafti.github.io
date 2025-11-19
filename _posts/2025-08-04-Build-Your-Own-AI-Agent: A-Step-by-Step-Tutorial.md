@@ -28,28 +28,28 @@ pip install cohere langchain-cohere pandas rapidfuzz python-dotenv
 
 Create a new directory for your project and set up the following structure:
 
-```
-my_agent/
-├── .env                    # API keys
-├── main.py                 # Entry point
-├── GAME.py                 # Core framework
-├── language.py             # Agent communication
-├── agent.py                # Main agent class
-├── response_generator.py   # LLM integration
-├── tool_registry.py        # Tool management
-└── tools/
-    ├── file_tools.py       # File operations
-    └── system_tools.py     # System utilities
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+<br>my_agent/
+<br>├── .env                    # API keys
+<br>├── main.py                 # Entry point
+<br>├── GAME.py                 # Core framework
+<br>├── language.py             # Agent communication
+<br>├── agent.py                # Main agent class
+<br>├── response_generator.py   # LLM integration
+<br>├── tool_registry.py        # Tool management
+<br>└── tools/
+<br>    ├── file_tools.py       # File operations
+<br>    └── system_tools.py     # System utilities
+</div>
 
 ## Step 2: Environment Setup
 
 First, create your `.env` file:
 
-```env
-COHERE_API_KEY=your_cohere_api_key_here
-OPENAI_API_KEY=your_oepnai_api_key_here(if you are using openai)
-```
+<div style="background-color:#f0f0f0; padding:20px; border-radius:30px;">
+<br>COHERE_API_KEY=your_cohere_api_key_here
+<br>OPENAI_API_KEY=your_oepnai_api_key_here(if you are using openai)
+</div>
 
 ## Step 3: Building the GAME Framework
 
@@ -63,11 +63,39 @@ Now let's have a look at the following code:
 This code has 4 classes for Goal, Action, Memory and Environment. Later on in your main.py, you will write down explicitly what is the goal, how to get the action and what is the memory for your agent, but the definition of the class and its attributes are set in this code.
 What this does:
 
-**Goals** give your agent direction. The frozen=True makes them immutable - once you define a goal, it can't be accidentally changed.
-**Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
-**Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
-**Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
+**1. Goals** give your agent direction. The frozen=True makes them immutable - once you define a goal, it can't be accidentally changed.
+**2. Actions** wrap Python functions so your agent can call them. The ActionRegistry keeps track of all available tools.
+**3. Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).
+**4. Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.
 
+In the Goal class we have the following: 
+```
+@dataclass(frozen=True)
+class Goal:
+    priority: int
+    name: str
+    description: str
+```
+dataclass is a class from dataclasses and allows us to define classes and make them frozen. It is ideal for Goal becasue the goal of the agent should not change during the execution of tasks.  In the Goal class we define each goal, their proirity, name and description. For example since we are building an AI agent here that should read CSV files, find their headers and cleanup and consolidate them, later in the main.py we have the following lines when we use Goal class.
+
+```
+from GAME import Goal
+
+goals = [
+    Goal(priority=1,
+         name="Explore Files",
+         description="Navigate folders and list available CSV files."),
+    Goal(priority=2,
+         name="Analyze CSV Files",
+         description="Count, identify, match, and inspect columns in CSV files using fuzzy matching."),
+    Goal(priority=3,
+         name="Clean and Consolidate Data",
+         description="Clean CSV files and merge them into a consolidated report."),
+    Goal(priority=4,
+         name="Terminate",
+         description="Call terminate when the user explicitly asks or the task is go to plete.")
+]
+```
 
 ## Step 4: Tool Registration System
 

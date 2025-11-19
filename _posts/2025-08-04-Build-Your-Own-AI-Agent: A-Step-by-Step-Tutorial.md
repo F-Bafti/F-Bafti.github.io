@@ -68,7 +68,7 @@ What this does:
 **3. Memory** stores the conversation history. Each item is a dictionary representing one piece of the conversation (user input, agent response, tool result).<br>
 **4. Environment** safely executes actions. If something goes wrong, it catches the error instead of crashing your agent.<br>
 
-In the Goal class we have the following: 
+In the **Goal** class we have the following: 
 ```
 @dataclass(frozen=True)
 class Goal:
@@ -96,6 +96,50 @@ goals = [
          description="Call terminate when the user explicitly asks or the task is go to plete.")
 ]
 ```
+
+The next class is **Action**. It creates a wrapper around a python function to make it available to the AI agent.  It has name, function, description, parameters, terminal attributes. 
+
+```
+class Action:
+    def __init__(self,
+                 name: str,
+                 function: Callable,
+                 description: str,
+                 parameters: Dict,
+                 terminal: bool = False):
+        self.name = name
+        self.function = function
+        self.description = description
+        self.terminal = terminal
+        self.parameters = parameters
+
+    def execute(self, **args) -> Any:
+        """Execute the action's function"""
+        return self.function(**args)
+```
+
+and then we have an action registery which is a container to storr all available actions:
+
+```
+# Creates a container to store all available actions
+class ActionRegistry:
+    def __init__(self):
+        self.actions = {}
+
+    def register(self, action: Action):
+        self.actions[action.name] = action
+
+    # Looks up an action by its name
+    def get_action(self, name: str) -> Action | None:
+        return self.actions.get(name, None)
+
+    # Returns ALL actions as a list
+    def get_actions(self) -> List[Action]:
+        """Get all registered actions"""
+        return list(self.actions.values())
+```
+
+
 
 ## Step 4: Tool Registration System
 

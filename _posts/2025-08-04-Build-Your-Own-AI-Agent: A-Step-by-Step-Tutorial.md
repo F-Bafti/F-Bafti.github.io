@@ -165,7 +165,7 @@ class Memory:
         return memory
 ```
 
-Finally in **Environment** class, is where the **Action** actually get executed. It has two important sections, in "try", it attempts to run the action. if it works, then it takes the results and format in nicely for the user but it fails to excute the function, the agent should catch the error and returns the error information instead of crashing.
+Finally in **Environment** class, is where the **Action** actually get executed. It has two important sections, in "try", it attempts to run the action. if it works, then it takes the results and format it nicely for the user but if it fails to excute the function, the agent should catch the error and returns the error information instead of crashing.
 
 ```python
 class Environment:
@@ -234,7 +234,7 @@ def list_csv_files() -> List[str]:
 **What this does**: This creates a simple tool that list all CSV files in the current working directory only.
 
 For more examples see:
-📁 File: file_tools.py, system_tools
+📁 File: file_tools.py, system_tools.py
 🔗 Source: [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/tools/)
 
 
@@ -245,7 +245,7 @@ Create `response_generator.py`: This is the bridge between your agent and the la
 📁 **File:** `response_generator.py`  
 🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/response_generator.py)
 
-**What this does**: This handles communication with the Cohere API, including:
+**What this does**: This handles communication with the API, including:
 - Converting your prompts to LangChain format
 - Managing tool calling
 - Timeout protection to prevent hanging
@@ -253,10 +253,10 @@ Create `response_generator.py`: This is the bridge between your agent and the la
 
 ## Step 7: Agent Communication
 
-Create `agent_language.py`. This is where we define how the agent communicates:
+Create `language.py`. This is where we define how the agent communicates:
 
-📁 **File:** `agent_language.py`  
-🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/agent_language.py)
+📁 **File:** `language.py`  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/language.py)
 
 **What this does**: 
 - Converts your goals into system messages for the LLM
@@ -266,10 +266,10 @@ Create `agent_language.py`. This is where we define how the agent communicates:
 
 ## Step 8: The Agent Loop
 
-Create `agent_loop.py` - the heart of your agent:
+Create `agent.py` - the heart of your agent:
 
-📁 **File:** `agent_loop.py`  
-🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/agent_loop.py)
+📁 **File:** `agent.py`  
+🔗 **Source:** [View on GitHub](https://github.com/F-Bafti/AI_Agent_csv_consolidator/blob/main/agent.py)
 
 **What this does**: This is your agent's "brain" It:
 1. Takes user input and builds a complete prompt
@@ -350,9 +350,6 @@ load_dotenv()  # Load variables from .env file
 api_key = os.getenv("COHERE_API_KEY")
 os.environ["COHERE_API_KEY"] = api_key
 
-
-
-
 # Define the agent's goals
 goals = [
     Goal(priority=1,
@@ -426,7 +423,100 @@ Try these commands:
 - "exit"
 
 Here is an example of how my AI agent interacts:
-<img width="980" height="924" alt="image" src="https://github.com/user-attachments/assets/17290a9e-3ea9-4ebe-9f3c-8ba65f7b8896" />
+```
+======================================================================================================
+
+Hi, I'm your agent. Ask me to explore directories, list CSVs, or analyze files. Type 'exit' to quit.
+
+🧑 You: Hi, how are you
+
+🤖 Agent: Hello! I'm an AI assistant, so I don't have feelings, but I'm here and ready to help you with any tasks related to exploring files, analyzing CSV files, cleaning and consolidating data, or anything else you need. How can I assist you today?
+
+🧑 You: Which folder are you in right now
+
+🤖 Agent: /Users/fahimeh/Projects/csv_consolidation
+
+🧑 You: can you list all the files there
+
+🤖 Agent: Type | Size (Bytes) | Modified Date/Time      | Name
+------------------------------------------------------------
+DIR  |              | 2025-07-29 15:10:21 | tools
+FILE | 8196         | 2025-10-15 15:58:24 | .DS_Store
+FILE | 8828         | 2025-07-31 11:49:19 | two_layer_registry.ipynb
+FILE | 4243         | 2025-10-15 15:39:38 | response_generator.py
+DIR  |              | 2025-10-15 16:12:42 | input_csvs
+FILE | 4011         | 2025-11-19 12:47:55 | GAME.py
+FILE | 4858         | 2025-11-19 13:44:35 | tool_registry.py
+DIR  |              | 2025-11-19 16:06:35 | __pycache__
+FILE | 528          | 2025-08-04 15:16:35 | README.md
+FILE | 16           | 2025-07-30 15:07:20 | .gitignore
+FILE | 60           | 2025-07-29 12:18:41 | .env
+FILE | 9049         | 2025-11-19 16:06:21 | language.py
+FILE | 3364         | 2025-11-19 14:19:41 | agent.py
+DIR  |              | 2025-11-11 11:16:12 | .git
+FILE | 2341         | 2025-11-19 15:48:57 | main.py
+
+🧑 You: can you go to input_csvs folder
+
+🤖 Agent: Changed working directory to /Users/fahimeh/Projects/csv_consolidation/input_csvs
+
+🧑 You: what is there
+
+🤖 Agent: Type | Size (Bytes) | Modified Date/Time      | Name
+------------------------------------------------------------
+FILE | 8486         | 2025-10-15 16:12:42 | sanandaj.csv
+FILE | 6148         | 2025-10-15 16:15:27 | .DS_Store
+FILE | 5831         | 2025-10-15 16:12:42 | tiran.csv
+FILE | 5483         | 2025-10-15 16:12:42 | zahedan.csv
+DIR  |              | 2025-10-15 16:13:08 | cleaned_csvs
+FILE | 6543         | 2025-10-15 16:12:42 | shahroud.csv
+FILE | 2637         | 2025-10-15 16:12:42 | shahrekord.csv
+FILE | 5957         | 2025-10-15 16:12:42 | babol.csv
+FILE | 4144         | 2025-10-15 16:12:42 | neyshabour_javad.csv
+FILE | 12559        | 2025-10-15 16:12:42 | khoy.csv
+FILE | 21989        | 2025-10-15 16:12:42 | jiroft.csv
+FILE | 4133         | 2025-10-15 16:12:42 | arak.csv
+FILE | 2094         | 2025-10-15 16:12:42 | naeen.csv
+FILE | 24028        | 2025-10-15 16:12:42 | bonab.csv
+FILE | 4444         | 2025-10-15 16:12:42 | boushehr.csv
+DIR  |              | 2025-10-15 16:14:41 | consolidated_csv
+FILE | 8601         | 2025-10-15 16:12:42 | ahzav_javad.csv
+FILE | 3373         | 2025-10-15 16:12:42 | neyshabour_maryam.csv
+FILE | 17621        | 2025-10-15 16:12:42 | shiraz.csv
+FILE | 4080         | 2025-10-15 16:12:42 | Ahvaz_golshan.csv
+FILE | 3688         | 2025-10-15 16:12:42 | bam.csv
+
+🧑 You: can you list only the csv files in that folder?
+
+🤖 Agent: ['Ahvaz_golshan.csv', 'ahzav_javad.csv', 'arak.csv', 'babol.csv', 'bam.csv', 'bonab.csv', 'boushehr.csv', 'jiroft.csv', 'khoy.csv', 'naeen.csv', 'neyshabour_javad.csv', 'neyshabour_maryam.csv', 'sanandaj.csv', 'shahrekord.csv', 'shahroud.csv', 'shiraz.csv', 'tiran.csv', 'zahedan.csv']
+
+🧑 You: how many csvs from neyshabour we have
+
+🤖 Agent: Found 1 CSV files related to center 'neyshabour_javad' in current directory.
+
+🧑 You: how many from naeen
+
+🤖 Agent: Found 1 CSV files related to center 'naeen' in current directory.
+
+🧑 You: list all the files from naeen
+
+🤖 Agent: ['naeen.csv']
+
+🧑 You: read the files from naeen
+
+🤖 Agent: نام مرکز → نام مرکز (exact match)
+نوع دوره → نوع دوره (لطفا مشخص کنید: تقویتی - ورزشی - هنری - مهارتی و یا سایر) (100.0)
+نام دقیق دوره → نام دقیق دوره (exact match)
+تاریخ شروع دوره → تاریخ شروع دوره (exact match)
+تاریخ پایان دوره → تاریخ پایان دوره (exact match)
+نام مددجویان شرکت کننده → نام و نام خانوادگی مددجویان شرکت کننده (100.0)
+نام معلم → نام و نام خانوادگی معلم (via synonym)
+تعداد مددجویان شرکت کننده → تعداد مددجویان شرکت کننده (exact match)
+تعداد جلسات دوره → تعداد جلسات دوره (exact match)
+هزینه پرداختی به معلم → ❌ Not found
+هزینه های اضافی → هزینه های اضافی (لطفا فقط عدد مبلغ را به تومان  و به انگلیسی وارد کنید) (100.0)
+توضیحات → ❌ Not found
+```
 
 
 **Congratulations!** You now have a working AI agent that can:
@@ -438,7 +528,44 @@ Here is an example of how my AI agent interacts:
 
 
 
+## Summary:
 
-## Conclusion
+1. GAME.py
+	•	Core classes: Goal, Action, ActionRegistry, Memory, Environment.
+	•	Defines the structure for goals, actions, storing memory, and executing actions safely.
 
-You've built a sophisticated AI agent system from scratch. Here's what you've accomplished:
+2. agent.py
+	•	Wraps everything into an Agent.
+	•	Loops through:
+	1.	Constructing a prompt from goals, memory, and actions.
+	2.	Sending it to the LLM (generate_response).
+	3.	Parsing the LLM’s response to choose an action.
+	4.	Executing that action in the environment.
+	5.	Updating memory.
+	6.	Checking if the agent should terminate.
+
+3. language.py
+	•	Translates the agent’s goals, memory, and available actions into a prompt the LLM can understand.
+	•	Handles parsing the LLM’s response into tool calls (parse_response).
+
+4. response_generator.py
+	•	Calls the LLM (Cohere via LangChain) with a prompt.
+	•	Handles tool/function calls, formats the result, applies timeout handling.
+	•	Returns either text or a JSON representing which tool to call and its arguments.
+
+5. tool_registry.py
+	•	Dynamically registers Python functions as tools for the agent.
+	•	Provides metadata (parameters, JSON schema, description, terminal flag, tags).
+	•	Decorator @register_tool makes a function available to the agent.
+
+⸻
+
+Full flow:
+	1.	User input: "List all CSV files in input_csvs".
+	2.	Agent: set_current_task → memory updated.
+	3.	Prompt built: AgentLanguage.construct_prompt() gathers goals, memory, actions.
+	4.	LLM call: generate_response() → returns JSON like:
+     5.	Agent parses response: get_action() → gets the corresponding Action.
+	6.	Action executed: Environment.execute_action() → runs the Python function safely.
+	7.	Memory updated: stores both the agent’s reasoning and environment result.
+	8.	Check termination: repeat until either the agent calls terminate or max iterations reached.

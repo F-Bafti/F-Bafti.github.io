@@ -1,6 +1,8 @@
 # Build Your Own AI Agent
 ## A Step-by-Step Tutorial
 
+<img src="/img/AI-Agent/AI-Agent-workflowss-en.png" alt="Shakespeare" style="width: 50%; height: auto; display: inline-block;">
+
 ## Introduction
 
 Have you ever wanted to build an AI agent that can autonomously handle file operations, analyze data, and maintain conversation context? In this comprehensive tutorial, we'll build a sophisticated agent system from the ground up using the **GAME framework** (Goals, Actions, Memory, Environment).

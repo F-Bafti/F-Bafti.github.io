@@ -1,7 +1,7 @@
 # Build Your Own AI Agent
 ## A Step-by-Step Tutorial
 
-<img src="/img/AI-Agent/AI-Agent-workflowss-en.png" alt="Shakespeare" style="width: 50%; height: auto; display: inline-block;">
+<img src="/img/AI-Agent/AI-Agent-workflowss-en.png" alt="Shakespeare" style="width: 100%; height: auto; display: inline-block;">
 
 ## Introduction
 

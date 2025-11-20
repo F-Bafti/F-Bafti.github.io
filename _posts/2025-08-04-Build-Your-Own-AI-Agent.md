@@ -1,4 +1,4 @@
-# Build Your Own AI Agent: 
+# Build Your Own AI Agent
 ## A Step-by-Step Tutorial
 
 ## Introduction

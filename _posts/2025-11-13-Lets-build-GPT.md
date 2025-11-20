@@ -1,10 +1,8 @@
-# Lets Build GPT
+# Lets build a tiny GPT
 
 In this blog, I follow Andrej Karpathy’s course on YouTube to build a GPT—specifically, a character-based generative transformer model. We won’t use the entire internet to train this model; instead, we’ll use a small dataset called **Tiny Shakespeare**, which we save as `input.txt` and you can download it from his github linked below. The goal is to create a model that can generate character sequences resembling this text.  Here is the link to his course on youtube:
 
-<div style="text-align: center; margin-bottom: 2em;">
-    <img src="/img/Shakespear.jpeg" alt="" style="width: 50%;"><figurecaption></figurecaption>
-</div>
+<img src="/img/Tiny_GPT/Shakespear.jpeg" alt="Shakespeare" style="width: 50%; height: auto; display: inline-block;">
 
 🔗 **Source:** [View on Youtube](https://www.youtube.com/watch?v=kCc8FmEb1nY&t=6084s)
 
@@ -111,8 +109,8 @@ When input is tensor([18, 47, 56, 57, 58,  1, 15, 47]), the target is: 58
 
 This approach allows the transformer to see input sequences ranging from a single character up to the full block size.
 
- ## Batching
-We also generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
+## Batching
+We generate batches of input because we cannot feed the entire dataset at once. Here’s a function to get a batch:
 
 ```
 batch_size = 4 # how many independent sequence will be process in parallel?
@@ -156,7 +154,7 @@ When input is: tensor([44, 53, 56,  1]), target ....<br>
 
 ## Bigram Language Model
 Now that the input data is ready we can start building the language model. The model we gonna build is called Bigram and in the following we will discuss details of the model.
-The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each numebr takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
+The only layer the model has for now is just an embedding layer which is a look up table with the size of our vocabulary and since in Tiny-Shakespear we have 65 characters, the vovab size is 65. The model in the forward pass takes the input which is of the size of (batch_size , block_size) or (B, T) and it will look into the embedding table and for each number takes that row and print it out as an output. So the output is of the size of (Batch_size* Block_size , Vocab_size) or (B, T, C). For the loss we use cross entropy loss.
 
 ```
 class BigramLanguageModel(nn.Module):
@@ -195,7 +193,7 @@ class BigramLanguageModel(nn.Module):
         return idx
 ```
 
-The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of next char by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
+The generation block takes the input sequence for each batch so the size is (B*T), then do the forward pass to obtain the logits. Now in order to obtain the next character we should compute the probability of next character by looking at the final character in the sequence. Therefore for the logits with dimension of (B,T,C), we focus on the last time step and therefore reduce the size to (B, C) and then we sample from the computed probs to guess what is the next character and we add it to our current sequence. 
 
 Now lets see what our model can generate before any training: 
 
@@ -264,11 +262,11 @@ xbow3 = wei @ x
 # Self Attention
 So far with this matrix multiplication, we are doing a simple average over all the previous tokens. But we dont want it to be like this, different tokens might get info from specific tokens. In this method, each token will have a query, key and a value matrix. Then we perform a dot product between the key of one token with respect to the query of all the other tokens.
 
-Query vector roughly speaking is : What am I looking for!
+**Query vector** roughly speaking is : What am I looking for!
 
-Key vector roughly speaking is: What do I contain!
+**Key vector** roughly speaking is: What do I contain!
 
-value vector roughly speaking is : What I will communicate to you (in this specific head)!
+**value vector** roughly speaking is : What I will communicate to you (in this specific head)!
 
 When we do a dot product, then dot product will be come the "wei" matrix. Now if the query and key dot product results in a high value, then it means that those two tokens are attending to each other.
 

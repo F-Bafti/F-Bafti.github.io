@@ -9,8 +9,8 @@ if the new changes to the product has made it a better experinece for the users 
 it is a good idea to implement the new change or just keep it as it is. or test new variations.
 
 ## AB testing steps:
-1- Hypothesis Desing
-2- Test desing
-3- Run AB test
-4- Resutls analysis
-5- 
+  1- Hypothesis Desing
+  2- Test desing
+  3- Run AB test
+  4- Resutls analysis
+  5- 

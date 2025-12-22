@@ -9,8 +9,15 @@ if the new changes to the product has made it a better experinece for the users 
 it is a good idea to implement the new change or just keep it as it is. or test new variations.
 
 ## AB testing steps:
-   - Hypothesis Desing
-   - Test desing
-   - Run AB test
+
+1. **Hypothesis Desing**
+At this point, all the stake holders decide what is being tested. What is the desired outcome and what KPI (key performance Indicator) we are going to influence. For example at this point we are deciding whether changing the color of a botom in the product page, is going to improve the engagment of the costumers.
+
+2. **Test desing**
+In this point we need to define the key primary metric for our test. This is the most important part of the test probably. The sucess metric is only one and we can not define more than one for a test as it is going to bias the results analysis. This metric can be for example the conversion rate. The subscription rate or so on ...
+conversion rate = (number of conversion / total number of visitors) * 100
+
+4. **Run AB test**
+   
    - Resutls analysis
    - Draw conclution

@@ -34,11 +34,8 @@ for the power analysis we have the following steps:
   POWER ANALYSIS:
   
   - Beta: Probability of type two error
-
   - (1-Beta): Power of the test
-
   - Alpha:  Probability of type one error, significance level
-
   - Delta: Minimum detectable effect
    
   ```

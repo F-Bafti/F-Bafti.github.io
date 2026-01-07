@@ -16,3 +16,7 @@ And this is a path conda environment. meaning that to activate it, you do:
 ```
 conda activate ./venv # or the complete path to the environment folder
 ```
+
+Then go to your github repo and open a new repository and name it something like : **End-2-End-ML-Project**. Now try to create a **README.md** file inside you project folder and push it to your github and make sure you see it there and also in your project folder inside vscode.
+
+<img width="303" height="207" alt="image" src="https://github.com/user-attachments/assets/533cb0bb-ec7e-41ac-9a67-e1eabb1d14b2" />
